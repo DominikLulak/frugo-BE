@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "offering-products.apples",
+    "category": "fruits",
+    "image": "/images/apple.png",
+    "variants": ["Golden Apple", "Granny Smith", "Gala"]
+  },
+  {
+    "id": 2,
+    "name": "offering-products.bananas",
+    "category": "fruits",
+    "image": "/images/banana.png",
+    "variants": ["Cavendish", "Plantain"]
+  },
+  {
+    "id": 3,
+    "name": "offering-products.carrots",
+    "category": "vegetables",
+    "image": "/images/carrot.png",
+    "variants": ["Oranžová", "Fialová"]
+  },
+  {
+    "id": 4,
+    "name": "offering-products.parsley",
+    "category": "herbs",
+    "image": "/images/parsley.png",
+    "variants": ["Einfache Schnitt"]
+  }
+]

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="cs">
+    <head>
+        <meta charset="UTF-8" />
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 40px;
+                color: #333;
+            }
+
+            .header {
+                margin-bottom: 30px;
+            }
+
+            .logo {
+                font-size: 28px;
+                font-weight: bold;
+                color: #2e7d32;
+            }
+
+            .company-info {
+                margin-top: 10px;
+                font-size: 14px;
+            }
+
+            .section {
+                margin-top: 30px;
+            }
+
+            .section-title {
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .customer-table td {
+                padding: 4px 10px 4px 0;
+            }
+
+            table.items {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            table.items th {
+                background-color: #2e7d32;
+                color: white;
+                padding: 10px;
+                text-align: left;
+            }
+
+            table.items td {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+
+            .footer {
+                margin-top: 40px;
+                font-size: 12px;
+                color: #666;
+            }
+
+            .right {
+                text-align: right;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- HEADER -->
+        <div class="header">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <div class="logo">FruGo</div>
+
+                        <div class="company-info">
+                            Email: info@frugo.com<br />
+                            Telefon: +420 123 456 789<br />
+                            Adresa: U archivu 123, 266 01 Beroun-Město
+                        </div>
+                    </td>
+
+                    <td style="text-align: right">
+                        <img
+                            src="http://localhost:8080/images/logo.png"
+                            width="120" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ORDER -->
+        <div class="section">
+            <h2>Objednávka <span th:text="${orderNumber}"></span></h2>
+        </div>
+
+        <!-- CUSTOMER -->
+        <div class="section">
+            <div class="section-title">Zákazník</div>
+
+            <table class="customer-table">
+                <tr>
+                    <td><b>Jméno / Firma:</b></td>
+                    <td th:text="${customer.name}"></td>
+                </tr>
+                <tr>
+                    <td><b>Adresa:</b></td>
+                    <td th:text="${customer.address}"></td>
+                </tr>
+                <tr>
+                    <td><b>Město:</b></td>
+                    <td th:text="${customer.city}"></td>
+                </tr>
+                <tr>
+                    <td><b>PSČ:</b></td>
+                    <td th:text="${customer.psc}"></td>
+                </tr>
+                <tr>
+                    <td><b>Stát:</b></td>
+                    <td th:text="${customer.state}"></td>
+                </tr>
+                <tr>
+                    <td><b>Email:</b></td>
+                    <td th:text="${customer.email}"></td>
+                </tr>
+                <tr>
+                    <td><b>Telefon:</b></td>
+                    <td th:text="${customer.phone}"></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ITEMS -->
+        <div class="section">
+            <div class="section-title">Položky objednávky</div>
+
+            <table class="items">
+                <thead>
+                    <tr>
+                        <th>Typ</th>
+                        <th>Druh</th>
+                        <th>Odrůda</th>
+                        <th>Množství</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="item : ${items}">
+                        <td th:text="${item.category}"></td>
+                        <td th:text="${item.name}"></td>
+                        <td th:text="${item.variant}"></td>
+                        <td th:text="${item.quantity}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer right">
+            Datum vytvoření: <span th:text="${dateTime}"></span>
+        </div>
+    </body>
+</html>
