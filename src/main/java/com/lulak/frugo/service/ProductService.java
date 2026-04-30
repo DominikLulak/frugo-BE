@@ -1,50 +1,37 @@
 package com.lulak.frugo.service;
 
 import com.lulak.frugo.model.Product;
-import org.springframework.core.io.ClassPathResource;
+import com.lulak.frugo.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 
-import java.io.InputStream;
 import java.util.List;
 
 @Service
 public class ProductService {
 
-    private List<Product> products;
+   private final ProductRepository repository;
 
-    public ProductService(){
-        loadProducts();
-    }
+   public ProductService(ProductRepository repository){
+       this.repository = repository;
+   }
 
-    private void loadProducts(){
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            InputStream input = new ClassPathResource("products.json").getInputStream();
+   public List<Product> getAll(){
+       return repository.findAll();
+   }
 
-            products = mapper.readValue(input, new TypeReference<List<Product>>() {});
-        } catch (Exception e){
-            throw new RuntimeException("Failed to load products", e);
-        }
-    }
+   public List<Product> getByCategory(String category){
+       if(category.equals("all")){
+           return repository.findAll();
+       }
 
-    public List<Product> getAll(){
-        return products;
-    }
+       return repository.findByCategory(category);
+   }
 
-    public List<Product> getByCategory(String category){
-        if(category.equals("all")) return products;
-
-        return products.stream()
-                .filter(p -> p.getCategory().equals(category))
-                .toList();
-    }
-
-    public List<String> getCategories(){
-        return products.stream()
-                .map(Product::getCategory)
-                .distinct()
-                .toList();
-    }
+   public List<String> getCategories(){
+       return repository.findAll()
+               .stream()
+               .map(Product::getCategory)
+               .distinct()
+               .toList();
+   }
 }
