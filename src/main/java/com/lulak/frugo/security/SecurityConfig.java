@@ -2,7 +2,6 @@ package com.lulak.frugo.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +29,7 @@ public class SecurityConfig {
                     CorsConfiguration config = new CorsConfiguration();
 
                     config.setAllowedOrigins(
-                            List.of("http://localhost:5173")
+                            List.of("http://localhost:5173", "http://localhost:5174")
                     );
 
                     config.setAllowedMethods(
@@ -45,11 +44,12 @@ public class SecurityConfig {
                 }))
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/api/orders/**").permitAll()
+                        .requestMatchers("/api/products/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
-                )
-
-                .httpBasic(Customizer.withDefaults());
+                );
 
         return http.build();
     }
