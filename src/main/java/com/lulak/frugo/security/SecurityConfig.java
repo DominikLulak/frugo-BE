@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.io.ObjectInputFilter;
 import java.util.List;
 
 @Configuration
@@ -40,14 +39,18 @@ public class SecurityConfig {
                             List.of("*")
                     );
 
+                    config.setExposedHeaders(
+                            List.of("Content-Disposition")
+                    );
+
                     return config;
                 }))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/images/**").permitAll()
-                        .requestMatchers("/api/orders/**").permitAll()
-                        .requestMatchers("/api/products/**").permitAll()
+                        .requestMatchers("/api/shop/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated()
                 );
 

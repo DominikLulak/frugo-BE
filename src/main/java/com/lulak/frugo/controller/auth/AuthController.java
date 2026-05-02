@@ -1,4 +1,4 @@
-package com.lulak.frugo.controller;
+package com.lulak.frugo.controller.auth;
 
 import com.lulak.frugo.dto.LoginRequest;
 import com.lulak.frugo.model.User;
