@@ -1,6 +1,7 @@
 package com.lulak.frugo.security;
 
 import com.lulak.frugo.model.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,32 @@ public class JwtSecurity {
                 .claim("role", user.getRole().name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key)
                 .compact();
+    }
+
+    public Claims extractClaims(String token){
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    public String extractUsername(String token){
+        return extractClaims(token).getSubject();
+    }
+
+    public String extractRole(String token){
+        return extractClaims(token).get("role", String.class);
+    }
+
+    public boolean isTokenValid(String token){
+        try{
+            extractClaims(token);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
     }
 }
