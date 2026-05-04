@@ -1,8 +1,7 @@
 package com.lulak.frugo;
 
-import com.lulak.frugo.model.Product;
-import com.lulak.frugo.model.Role;
-import com.lulak.frugo.model.User;
+import com.lulak.frugo.model.*;
+import com.lulak.frugo.repository.OrderRepository;
 import com.lulak.frugo.repository.ProductRepository;
 import com.lulak.frugo.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -15,38 +14,123 @@ import java.util.Locale;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final OrderRepository orderRepository;
 
-    public DataLoader(UserRepository userRepository, PasswordEncoder passwordEncoder){
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public DataLoader(OrderRepository orderRepository){
+        this.orderRepository = orderRepository;
     }
 
     @Override
     public void run(String... args){
 
-        if(userRepository.findByUsername("admin").isEmpty()){
-            userRepository.save(
-                    new User(
-                            "admin",
-                            passwordEncoder.encode("admin123"),
-                            Role.ADMIN
-                    )
-            );
-        }
+        if(orderRepository.count() > 0) return;
 
-        if(userRepository.findByUsername("user").isEmpty()){
-            userRepository.save(
-                    new User(
-                            "user",
-                            passwordEncoder.encode("user123"),
-                            Role.USER
-                    )
-            );
-        }
+        //1.
+        Order order1 = new Order();
+        order1.setOrderNumber("FRG-1001");
+        order1.setStatus(OrderStatus.ZADÁNO);
+        order1.setCustomerName("Zelinářství ABC");
+
+        OrderItem item1 = new OrderItem();
+        item1.setCategory("fruits");
+        item1.setName("Jablka");
+        item1.setVariant("Golden Apple");
+        item1.setQuantity(100);
+        item1.setOrder(order1);
+
+        OrderItem item2 = new OrderItem();
+        item2.setCategory("fruits");
+        item2.setName("Banány");
+        item2.setVariant("Cavendish");
+        item2.setQuantity(50);
+        item2.setOrder(order1);
+
+        order1.setItems(List.of(item1, item2));
+
+        //2.
+        Order order2 = new Order();
+        order2.setOrderNumber("FRG-1002");
+        order2.setStatus(OrderStatus.UVOLNĚNO);
+        order2.setCustomerName("Penny Market - Hradčanská 12");
+
+        OrderItem item3 = new OrderItem();
+        item3.setCategory("fruits");
+        item3.setName("Jablka");
+        item3.setVariant("Gala");
+        item3.setQuantity(40);
+        item3.setOrder(order2);
+
+        OrderItem item4 = new OrderItem();
+        item4.setCategory("vegetables");
+        item4.setName("Mrkve");
+        item4.setVariant("Oranžová");
+        item4.setQuantity(55);
+        item4.setOrder(order2);
+
+        order2.setItems(List.of(item3, item4));
+
+        //3.
+        Order order3 = new Order();
+        order3.setOrderNumber("FRG-1003");
+        order3.setStatus(OrderStatus.DOKONČENO);
+        order3.setCustomerName("Petr Novotny");
+
+        OrderItem item5 = new OrderItem();
+        item5.setCategory("fruits");
+        item5.setName("Jablka");
+        item5.setVariant("Granny Smith");
+        item5.setQuantity(500);
+        item5.setOrder(order3);
+
+        OrderItem item6 = new OrderItem();
+        item6.setCategory("herbs");
+        item6.setName("Petržel");
+        item6.setVariant("Einfache Schnitt");
+        item6.setQuantity(250);
+        item6.setOrder(order3);
+
+        order3.setItems(List.of(item5, item6));
+
+        orderRepository.saveAll(List.of(order1, order2, order3));
     }
 
+
+
+
+
+    //Users!!
+//    private final UserRepository userRepository;
+//    private final PasswordEncoder passwordEncoder;
+//
+//    public DataLoader(UserRepository userRepository, PasswordEncoder passwordEncoder){
+//        this.userRepository = userRepository;
+//        this.passwordEncoder = passwordEncoder;
+//    }
+//
+//    @Override
+//    public void run(String... args){
+//
+//        if(userRepository.findByUsername("admin").isEmpty()){
+//            userRepository.save(
+//                    new User(
+//                            "admin",
+//                            passwordEncoder.encode("admin123"),
+//                            Role.ADMIN
+//                    )
+//            );
+//        }
+//
+//        if(userRepository.findByUsername("user").isEmpty()){
+//            userRepository.save(
+//                    new User(
+//                            "user",
+//                            passwordEncoder.encode("user123"),
+//                            Role.USER
+//                    )
+//            );
+//        }
+//    }
+//Produkty!!
 //    private final ProductRepository repository;
 //
 //    public DataLoader(ProductRepository repository){
