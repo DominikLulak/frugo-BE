@@ -5,10 +5,10 @@ import com.lulak.frugo.model.OrderStatus;
 public class AdminOrderDto {
 
     public String orderNumber;
-    public OrderStatus status;
+    public String status;
     public String customerName;
 
-    public AdminOrderDto(String orderNumber, OrderStatus status, String customerName){
+    public AdminOrderDto(String orderNumber, String status, String customerName){
         this.orderNumber = orderNumber;
         this.status = status;
         this.customerName = customerName;
