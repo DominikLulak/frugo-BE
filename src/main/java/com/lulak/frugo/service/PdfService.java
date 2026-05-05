@@ -2,6 +2,7 @@ package com.lulak.frugo.service;
 
 import com.lulak.frugo.dto.OrderItemDto;
 import com.lulak.frugo.dto.OrderRequest;
+import com.lulak.frugo.dto.PdfResult;
 import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.springframework.stereotype.Service;
@@ -25,18 +26,20 @@ public class PdfService {
         this.translationService = translationService;
     }
 
-    public byte[] generateInvoice(OrderRequest order){
+    public PdfResult generateInvoice(OrderRequest order){
         try{
             for(OrderItemDto item : order.items){
                 item.name = translationService.translateProduct(item.name);
                 item.category = translationService.translateCategory(item.category);
             }
 
+            String orderNumber = "FRG-" + System.currentTimeMillis();
+
             Context context = new Context();
 
             context.setVariable("customer", order.customer);
             context.setVariable("items", order.items);
-            context.setVariable("orderNumber", System.currentTimeMillis());
+            context.setVariable("orderNumber", orderNumber);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyy-MM-dd HH:mm:ss");
 
@@ -66,9 +69,11 @@ public class PdfService {
             builder.toStream(out);
             builder.run();
 
+            return new PdfResult(
+                    orderNumber + ".pdf",
+                    out.toByteArray()
+            );
 
-
-            return out.toByteArray();
         } catch (Exception e){
             throw new RuntimeException("PDF generation failed", e);
         }
