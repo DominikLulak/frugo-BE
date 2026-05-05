@@ -1,7 +1,7 @@
 package com.lulak.frugo.service;
 
 import com.lulak.frugo.dto.AdminOrderDto;
-import com.lulak.frugo.model.OrderStatus;
+import com.lulak.frugo.model.Status;
 import com.lulak.frugo.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +19,11 @@ public class AdminOrderService {
             String status,
             String customerName
     ){
-        OrderStatus statusEnum = null;
+        Status statusEnum = null;
 
         if(status != null && !status.isBlank()){
             try{
-                statusEnum = OrderStatus.valueOf(status.toUpperCase());
+                statusEnum = Status.valueOf(status.toUpperCase());
             }catch (IllegalArgumentException e){
                 statusEnum = null;
             }

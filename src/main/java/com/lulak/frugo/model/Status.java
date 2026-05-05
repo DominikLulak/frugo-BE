@@ -1,6 +1,6 @@
 package com.lulak.frugo.model;
 
-public enum OrderStatus {
+public enum Status {
     ZADÁNO,
     UVOLNĚNO,
     DOKONČENO
