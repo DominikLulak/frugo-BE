@@ -1,6 +1,7 @@
 package com.lulak.frugo;
 
 import com.lulak.frugo.model.*;
+import com.lulak.frugo.repository.CustomerRepository;
 import com.lulak.frugo.repository.EmployeeRepository;
 import com.lulak.frugo.repository.OrderRepository;
 import com.lulak.frugo.repository.ShipmentRepository;
@@ -14,40 +15,82 @@ import java.util.List;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final EmployeeRepository employeeRepository;
+    private final CustomerRepository customerRepository;
 
-    public DataLoader(EmployeeRepository employeeRepository){
-        this.employeeRepository = employeeRepository;
+    public DataLoader(CustomerRepository customerRepository){
+        this.customerRepository = customerRepository;
     }
 
     @Override
     public void run(String... args){
-        if(employeeRepository.count() > 0) return;
+        if(customerRepository.count() > 0)return;
 
-        Employee employee1 = new Employee();
-        employee1.setPersonalNumber("TS001");
-        employee1.setFirstName("Karel");
-        employee1.setLastName("Novotny");
-        employee1.setPosition("CEO");
-        employee1.setPhoneNumber("123456789");
-        employee1.setEmail("knovotny@email.com");
-        employee1.setAddress("Ulice12, Praha 1");
-        employee1.setHireDate(LocalDate.of(2008, 3, 1));
-        employee1.setBirthDate(LocalDate.of(1970, 6, 12));
+        Customer customer1 = new Customer();
+        customer1.setCustomerNumber("CS001");
+        customer1.setName("Zelinářství ABC");
+        customer1.setCountry("Česká Republika");
+        customer1.setAddress("Na Obci 1778, 251 01 Říčany u Prahy");
+        customer1.setExecutive("Martin Novák");
+        customer1.setEmail("m.novak@email.cz");
+        customer1.setPhoneNumber("+420 777555666");
 
-        Employee employee2 = new Employee();
-        employee2.setPersonalNumber("TS002");
-        employee2.setFirstName("Pepa");
-        employee2.setLastName("Novak");
-        employee2.setPosition("Skladnik");
-        employee2.setPhoneNumber("987654312");
-        employee2.setEmail("pnovak@email.com");
-        employee2.setAddress("Ulicka3, Praha 8");
-        employee2.setHireDate(LocalDate.of(2010, 10, 1));
-        employee2.setBirthDate(LocalDate.of(1991, 12, 20));
+        Customer customer2 = new Customer();
+        customer2.setCustomerNumber("CS002");
+        customer2.setName("Petr Novotný");
+        customer2.setCountry("Česká Republika");
+        customer2.setAddress("Máchova 411, 332 02 Starý Plzenec");
+        customer2.setEmail("p.novotný@email.cz");
+        customer2.setPhoneNumber("+420 777999111");
 
-        employeeRepository.saveAll(List.of(employee1, employee2));
+        Customer customer3 = new Customer();
+        customer3.setCustomerNumber("DE001");
+        customer3.setName("Sportheim Bannewitz");
+        customer3.setCountry("Německo");
+        customer3.setAddress("Muhlenweg 3, 01728 Bannewitz");
+        customer3.setExecutive("Hans Müller");
+        customer3.setEmail("h.muller@email.de");
+        customer3.setPhoneNumber("+49 155 4447895");
+
+        customerRepository.saveAll(List.of(customer1, customer2, customer3));
+
     }
+
+
+    //Employees
+//    private final EmployeeRepository employeeRepository;
+//
+//    public DataLoader(EmployeeRepository employeeRepository){
+//        this.employeeRepository = employeeRepository;
+//    }
+//
+//    @Override
+//    public void run(String... args){
+//        if(employeeRepository.count() > 0) return;
+//
+//        Employee employee1 = new Employee();
+//        employee1.setPersonalNumber("TS001");
+//        employee1.setFirstName("Karel");
+//        employee1.setLastName("Novotny");
+//        employee1.setPosition("CEO");
+//        employee1.setPhoneNumber("123456789");
+//        employee1.setEmail("knovotny@email.com");
+//        employee1.setAddress("Ulice12, Praha 1");
+//        employee1.setHireDate(LocalDate.of(2008, 3, 1));
+//        employee1.setBirthDate(LocalDate.of(1970, 6, 12));
+//
+//        Employee employee2 = new Employee();
+//        employee2.setPersonalNumber("TS002");
+//        employee2.setFirstName("Pepa");
+//        employee2.setLastName("Novak");
+//        employee2.setPosition("Skladnik");
+//        employee2.setPhoneNumber("987654312");
+//        employee2.setEmail("pnovak@email.com");
+//        employee2.setAddress("Ulicka3, Praha 8");
+//        employee2.setHireDate(LocalDate.of(2010, 10, 1));
+//        employee2.setBirthDate(LocalDate.of(1991, 12, 20));
+//
+//        employeeRepository.saveAll(List.of(employee1, employee2));
+//    }
 
 
     //Shipment
