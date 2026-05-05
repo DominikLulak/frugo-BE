@@ -1,46 +1,86 @@
 package com.lulak.frugo;
 
 import com.lulak.frugo.model.*;
+import com.lulak.frugo.repository.EmployeeRepository;
 import com.lulak.frugo.repository.OrderRepository;
 import com.lulak.frugo.repository.ShipmentRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import javax.xml.crypto.Data;
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final ShipmentRepository shipmentRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public DataLoader(ShipmentRepository shipmentRepository){
-        this.shipmentRepository = shipmentRepository;
+    public DataLoader(EmployeeRepository employeeRepository){
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
     public void run(String... args){
-        if(shipmentRepository.count() > 0) return;
+        if(employeeRepository.count() > 0) return;
 
-        Shipment shipment1 = new Shipment();
-        shipment1.setShipmentNumber("Z-9001");
-        shipment1.setOrderNumber("FRG-0199");
-        shipment1.setStatus(Status.DOKONČENO);
-        shipment1.setCustomerName("Hotel Cloud");
+        Employee employee1 = new Employee();
+        employee1.setPersonalNumber("TS001");
+        employee1.setFirstName("Karel");
+        employee1.setLastName("Novotny");
+        employee1.setPosition("CEO");
+        employee1.setPhoneNumber("123456789");
+        employee1.setEmail("knovotny@email.com");
+        employee1.setAddress("Ulice12, Praha 1");
+        employee1.setHireDate(LocalDate.of(2008, 3, 1));
+        employee1.setBirthDate(LocalDate.of(1970, 6, 12));
 
-        Shipment shipment2 = new Shipment();
-        shipment2.setShipmentNumber("Z-9002");
-        shipment2.setOrderNumber("FRG-1003");
-        shipment2.setStatus(Status.UVOLNĚNO);
-        shipment2.setCustomerName("Petr Novotny");
+        Employee employee2 = new Employee();
+        employee2.setPersonalNumber("TS002");
+        employee2.setFirstName("Pepa");
+        employee2.setLastName("Novak");
+        employee2.setPosition("Skladnik");
+        employee2.setPhoneNumber("987654312");
+        employee2.setEmail("pnovak@email.com");
+        employee2.setAddress("Ulicka3, Praha 8");
+        employee2.setHireDate(LocalDate.of(2010, 10, 1));
+        employee2.setBirthDate(LocalDate.of(1991, 12, 20));
 
-        Shipment shipment3 = new Shipment();
-        shipment3.setShipmentNumber("Z-9003");
-        shipment3.setOrderNumber("FRG-1002");
-        shipment3.setStatus(Status.ZADÁNO);
-        shipment3.setCustomerName("Penny Market - Hradčanská 12");
-
-        shipmentRepository.saveAll(List.of(shipment1, shipment2, shipment3));
+        employeeRepository.saveAll(List.of(employee1, employee2));
     }
+
+
+    //Shipment
+//    private final ShipmentRepository shipmentRepository;
+//
+//    public DataLoader(ShipmentRepository shipmentRepository){
+//        this.shipmentRepository = shipmentRepository;
+//    }
+//
+//    @Override
+//    public void run(String... args){
+//        if(shipmentRepository.count() > 0) return;
+//
+//        Shipment shipment1 = new Shipment();
+//        shipment1.setShipmentNumber("Z-9001");
+//        shipment1.setOrderNumber("FRG-0199");
+//        shipment1.setStatus(Status.DOKONČENO);
+//        shipment1.setCustomerName("Hotel Cloud");
+//
+//        Shipment shipment2 = new Shipment();
+//        shipment2.setShipmentNumber("Z-9002");
+//        shipment2.setOrderNumber("FRG-1003");
+//        shipment2.setStatus(Status.UVOLNĚNO);
+//        shipment2.setCustomerName("Petr Novotny");
+//
+//        Shipment shipment3 = new Shipment();
+//        shipment3.setShipmentNumber("Z-9003");
+//        shipment3.setOrderNumber("FRG-1002");
+//        shipment3.setStatus(Status.ZADÁNO);
+//        shipment3.setCustomerName("Penny Market - Hradčanská 12");
+//
+//        shipmentRepository.saveAll(List.of(shipment1, shipment2, shipment3));
+//    }
 
 
     //Orders
