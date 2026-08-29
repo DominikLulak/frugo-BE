@@ -1,7 +1,8 @@
 package com.lulak.frugo.controller.admin;
 
-import com.lulak.frugo.dto.AdminShipmentDto;
-import com.lulak.frugo.service.AdminShipmentService;
+import com.lulak.frugo.dto.shipment.AdminShipmentDetailDto;
+import com.lulak.frugo.dto.shipment.AdminShipmentDto;
+import com.lulak.frugo.service.shipment.AdminShipmentService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,5 +26,12 @@ public class AdminShipmentController {
             @RequestParam(required = false) String customerName
     ){
         return adminShipmentService.getFilteredShipments(shipmentNumber, orderNumber, status, customerName);
+    }
+
+    @GetMapping("/{id}")
+    public AdminShipmentDetailDto getShipmentDetail(
+            @PathVariable Integer id
+    ){
+        return adminShipmentService.getShipmentDetail(id);
     }
 }

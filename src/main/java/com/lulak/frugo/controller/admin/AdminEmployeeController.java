@@ -1,8 +1,8 @@
 package com.lulak.frugo.controller.admin;
 
-import com.lulak.frugo.dto.AdminEmployeeDetailDto;
-import com.lulak.frugo.dto.AdminEmployeeListDto;
-import com.lulak.frugo.service.AdminEmployeeService;
+import com.lulak.frugo.dto.employee.AdminEmployeeDetailDto;
+import com.lulak.frugo.dto.employee.AdminEmployeeListDto;
+import com.lulak.frugo.service.employee.AdminEmployeeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,25 +20,25 @@ public class AdminEmployeeController {
 
     @GetMapping
     public List<AdminEmployeeListDto> getEmployees(
-            @RequestParam(required = false) String personalNumber,
+            @RequestParam(required = false) String employeeNumber,
             @RequestParam(required = false) String fullName,
-            @RequestParam(required = false) String position,
-            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String jobPosition,
+            @RequestParam(required = false) String phone,
             @RequestParam(required = false) String shift
     ){
         return adminEmployeeService.getFilteredEmployees(
-                personalNumber,
+                employeeNumber,
                 fullName,
-                position,
-                phoneNumber,
+                jobPosition,
+                phone,
                 shift
         );
     }
 
-    @GetMapping("/{personalNumber}")
+    @GetMapping("/{employeeNumber}")
     public AdminEmployeeDetailDto getEmployeeDetail(
-            @PathVariable String personalNumber
+            @PathVariable String employeeNumber
     ){
-        return adminEmployeeService.getEmployeeDetail(personalNumber);
+        return adminEmployeeService.getEmployeeDetail(employeeNumber);
     }
 }

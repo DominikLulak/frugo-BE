@@ -1,12 +1,15 @@
 package com.lulak.frugo.controller.auth;
 
 import com.lulak.frugo.dto.LoginRequest;
-import com.lulak.frugo.model.User;
-import com.lulak.frugo.repository.UserRepository;
+import com.lulak.frugo.model.auth.EmployeeRole;
+import com.lulak.frugo.model.employee.EmployeeLogin;
+import com.lulak.frugo.repository.auth.EmployeeRoleRepository;
+import com.lulak.frugo.repository.employee.EmployeeLoginRepository;
 import com.lulak.frugo.security.JwtSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -14,14 +17,19 @@ import java.util.Map;
 @CrossOrigin("*")
 public class AuthController {
 
-    private final UserRepository userRepository;
+    private final EmployeeLoginRepository employeeLoginRepository;
+    private final EmployeeRoleRepository employeeRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtSecurity jwtSecurity;
 
-    public AuthController(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder,
-                          JwtSecurity jwtSecurity){
-        this.userRepository = userRepository;
+    public AuthController(
+            EmployeeLoginRepository employeeLoginRepository,
+            EmployeeRoleRepository employeeRoleRepository,
+            PasswordEncoder passwordEncoder,
+            JwtSecurity jwtSecurity
+    ){
+        this.employeeLoginRepository = employeeLoginRepository;
+        this.employeeRoleRepository = employeeRoleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtSecurity = jwtSecurity;
     }
@@ -29,30 +37,36 @@ public class AuthController {
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody LoginRequest request){
 
-        User user = userRepository.findByUsername(request.getUsername())
+        EmployeeLogin login = employeeLoginRepository
+                .findByUsername(request.getUsername())
                 .orElse(null);
 
-        if(user == null){
+        if(login == null){
             return Map.of(
                     "success", false,
                     "message", "User not found"
             );
         }
 
-        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            return Map.of(
-                    "success", false,
-                    "message", "Wrong password"
-            );
-        }
+        List<EmployeeRole> employeeRoles =
+                employeeRoleRepository.findByEmployee_Id(
+                        login.getEmployeeId()
+                );
 
-        String token = jwtSecurity.generateToken(user);
+        List<String> roles = employeeRoles.stream()
+                .map(employeeRole -> employeeRole.getRole().getCode())
+                .toList();
+
+        String token = jwtSecurity.generateToken(
+                login.getUsername(),
+                roles
+        );
 
         return Map.of(
                 "success", true,
                 "token", token,
-                "role", user.getRole(),
-                "username", user.getUsername()
+                "roles", roles,
+                "username", login.getUsername()
         );
     }
 }
