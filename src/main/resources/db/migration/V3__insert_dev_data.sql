@@ -29,7 +29,7 @@ INSERT INTO status (id, code, name, description) VALUES
     (2, 'RELEASED', 'Released', 'Ready  to process'),
     (3, 'BLOCKED', 'Blocked', 'Task is blocked'),
     (4, 'COMPLETED', 'Completed', 'Successfully completed'),
-    (5, 'CANCELLED', 'Cancelled', 'Cancelled record');
+    (5, 'CANCELLED', 'Cancelled', 'Cancelled record'),
     (6, 'FINISHED', 'Finished', 'Finished by expedition');
 
 INSERT INTO shift (id, code, description) VALUES
