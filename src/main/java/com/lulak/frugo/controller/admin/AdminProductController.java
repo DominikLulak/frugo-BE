@@ -24,13 +24,11 @@ public class AdminProductController {
     @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<AdminProductListDto> getProducts(
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String name,
             @RequestParam(required = false) String productType,
             @RequestParam(required = false) String productCode
     ){
         return adminProductService.getFilteredProducts(
                 category,
-                name,
                 productType,
                 productCode
         );

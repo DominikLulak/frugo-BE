@@ -18,13 +18,11 @@ public class AdminProductService {
 
     public List<AdminProductListDto> getFilteredProducts(
             String category,
-            String name,
             String productType,
             String productCode
     ){
         return productRepository.getFilteredProducts(
                 category,
-                name,
                 productType,
                 productCode
         );

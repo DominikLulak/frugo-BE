@@ -1,6 +1,7 @@
 package com.lulak.frugo.model.product;
 
 import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.math.BigDecimal;
 
@@ -31,6 +32,12 @@ public class Product {
     @Column(name = "is_for_sale", nullable = false)
     private boolean forSale;
 
+    @Column(name = "reorder_point", nullable = false)
+    private Integer reorderPoint;
+
+    @Column(name = "minimum_stock", nullable = false)
+    private Integer minimumStock;
+
     public Product(){}
 
     public Integer getId(){ return id; }
@@ -52,4 +59,10 @@ public class Product {
 
     public boolean isForSale(){ return forSale; }
     public void setForSale(boolean forSale){ this.forSale = forSale; }
+
+    public Integer getReorderPoint(){ return reorderPoint; }
+    public void setReorderPoint(Integer reorderPoint){ this.reorderPoint = reorderPoint; }
+
+    public Integer getMinimumStock(){ return minimumStock; }
+    public void setMinimumStock(Integer minimumStock){ this.minimumStock = minimumStock; }
 }

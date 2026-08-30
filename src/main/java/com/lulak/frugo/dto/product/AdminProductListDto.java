@@ -4,32 +4,53 @@ import java.math.BigDecimal;
 
 public class AdminProductListDto {
 
-    public Integer id;
-    public String productCode;
-    public String name;
-    public String productType;
-    public String category;
-    public BigDecimal pricePerUnit;
-    public Integer shelfLifeDays;
-    public boolean forSale;
+    private Integer id;
+    private String productCode;
+    private String categoryCode;
+    private String productType;
+    private String productName;
+    private BigDecimal pricePerUnit;
+    private Integer shelfLifeDays;
+    private boolean forSale;
+    private Long availableStock;
+    private Integer reorderPoint;
+    private Integer minimumStock;
 
     public AdminProductListDto(
             Integer id,
             String productCode,
-            String name,
+            String categoryCode,
             String productType,
-            String category,
+            String productName,
             BigDecimal pricePerUnit,
             Integer shelfLifeDays,
-            boolean forSale
+            boolean forSale,
+            Long availableStock,
+            Integer reorderPoint,
+            Integer minimumStock
     ){
         this.id = id;
         this.productCode = productCode;
-        this.name = name;
+        this.categoryCode = categoryCode;
         this.productType = productType;
-        this.category = category;
+        this.productName = productName;
         this.pricePerUnit = pricePerUnit;
         this.shelfLifeDays = shelfLifeDays;
         this.forSale = forSale;
+        this.availableStock = availableStock;
+        this.reorderPoint = reorderPoint;
+        this.minimumStock = minimumStock;
     }
+
+    public Integer getId(){ return id; }
+    public String getProductCode(){ return productCode; }
+    public String getCategoryCode(){ return categoryCode; }
+    public String getProductType(){ return productType; }
+    public String getProductName(){ return productName; }
+    public BigDecimal getPricePerUnit(){ return pricePerUnit; }
+    public Integer getShelfLifeDays(){ return shelfLifeDays; }
+    public boolean isForSale(){ return forSale; }
+    public Long getAvailableStock(){ return availableStock; }
+    public Integer getReorderPoint(){ return reorderPoint; }
+    public Integer getMinimumStock(){ return minimumStock; }
 }
