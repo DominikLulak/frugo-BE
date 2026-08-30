@@ -15,12 +15,17 @@ public class JwtSecurity {
     private final String SECRET = "12345678901234567890123456789012";
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public String generateToken(String username, List<String> roles){
-        long expiration = 100 * 60 * 60 * 3;
+    public String generateToken(
+            String username,
+            List<String> roles,
+            List<String> permissions
+    ){
+        long expiration = 1000 * 60 * 60 * 3;
 
         return Jwts.builder()
                 .subject(username)
                 .claim("roles", roles)
+                .claim("permissions", permissions)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
@@ -43,7 +48,11 @@ public class JwtSecurity {
         return extractClaims(token).get("roles", List.class);
     }
 
-    public boolean isTokenVailid(String token){
+    public List<String> extractPermissions(String token){
+        return extractClaims(token).get("permissions", List.class);
+    }
+
+    public boolean isTokenValid(String token){
         try{
             extractClaims(token);
             return true;

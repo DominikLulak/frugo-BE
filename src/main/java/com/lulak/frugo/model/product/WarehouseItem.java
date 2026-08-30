@@ -64,8 +64,8 @@ public class WarehouseItem {
     public String getEtiNumber(){ return etiNumber; }
     public void setEtiNumber(String etiNumber){ this.etiNumber = etiNumber; }
 
-    public Packaging getPackageType(){ return packagingType; }
-    public void setPackageType(Packaging packagingType){ this.packagingType = packagingType; }
+    public Packaging getPackagingType(){ return packagingType; }
+    public void setPackagingType(Packaging packagingType){ this.packagingType = packagingType; }
 
     public Integer getQuantityPerPackage(){ return quantityPerPackage; }
     public void setQuantityPerPackage(Integer quantityPerPackage){ this.quantityPerPackage = quantityPerPackage; }

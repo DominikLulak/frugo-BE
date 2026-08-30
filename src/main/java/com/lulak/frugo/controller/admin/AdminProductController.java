@@ -1,13 +1,10 @@
 package com.lulak.frugo.controller.admin;
 
-import com.lulak.frugo.dto.customer.AdminCustomerDetailDto;
-import com.lulak.frugo.dto.customer.AdminCustomerListDto;
 import com.lulak.frugo.dto.product.AdminProductDetailDto;
 import com.lulak.frugo.dto.product.AdminProductListDto;
 import com.lulak.frugo.model.product.Product;
-import com.lulak.frugo.service.customer.AdminCustomerService;
-import com.lulak.frugo.dto.AdminStockItemDto;
 import com.lulak.frugo.service.product.AdminProductService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +21,7 @@ public class AdminProductController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<AdminProductListDto> getProducts(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String name,
@@ -39,6 +37,7 @@ public class AdminProductController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public AdminProductDetailDto getProductDetail(
             @PathVariable Integer id
     ){

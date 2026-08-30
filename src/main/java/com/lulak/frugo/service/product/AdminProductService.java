@@ -1,6 +1,5 @@
 package com.lulak.frugo.service.product;
 
-import com.lulak.frugo.dto.AdminStockItemDto;
 import com.lulak.frugo.dto.product.AdminProductListDto;
 import com.lulak.frugo.model.product.Product;
 import com.lulak.frugo.repository.product.ProductRepository;

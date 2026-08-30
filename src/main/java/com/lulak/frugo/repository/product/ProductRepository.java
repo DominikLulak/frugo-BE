@@ -2,11 +2,9 @@ package com.lulak.frugo.repository.product;
 
 import com.lulak.frugo.dto.product.AdminProductListDto;
 import com.lulak.frugo.model.product.Product;
-import com.lulak.frugo.dto.AdminStockItemDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 

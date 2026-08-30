@@ -6,6 +6,7 @@ import com.lulak.frugo.model.employee.EmployeeLogin;
 import com.lulak.frugo.repository.auth.EmployeeRoleRepository;
 import com.lulak.frugo.repository.employee.EmployeeLoginRepository;
 import com.lulak.frugo.security.JwtSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +45,17 @@ public class AuthController {
         if(login == null){
             return Map.of(
                     "success", false,
-                    "message", "User not found"
+                    "message", "Invalid username or password!"
+            );
+        }
+
+        if(!passwordEncoder.matches(
+                request.getPassword(),
+                login.getPasswordHash()
+        )){
+            return Map.of(
+                    "success", false,
+                    "message", "Invalid username or password!"
             );
         }
 
@@ -57,15 +68,22 @@ public class AuthController {
                 .map(employeeRole -> employeeRole.getRole().getCode())
                 .toList();
 
+        List<String> permissions =
+                employeeRoleRepository.findPermissionCodeByEmployeeId(
+                        login.getEmployeeId()
+                );
+
         String token = jwtSecurity.generateToken(
                 login.getUsername(),
-                roles
+                roles,
+                permissions
         );
 
         return Map.of(
                 "success", true,
                 "token", token,
                 "roles", roles,
+                "permissions", permissions,
                 "username", login.getUsername()
         );
     }

@@ -39,16 +39,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        if(!jwtSecurity.isTokenVailid(token)){
+        if(!jwtSecurity.isTokenValid(token)){
             filterChain.doFilter(request, response);
             return;
         }
 
         String username = jwtSecurity.extractUsername(token);
-        List<String> roles = jwtSecurity.extractRoles(token);
 
-        List<SimpleGrantedAuthority> authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+        List<String> permissions =
+                jwtSecurity.extractPermissions(token);
+
+        List<SimpleGrantedAuthority> authorities = permissions.stream()
+                .map(SimpleGrantedAuthority::new)
                 .toList();
 
         UsernamePasswordAuthenticationToken authentication =
@@ -57,6 +59,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         null,
                         authorities
                 );
+
+        System.out.println("AUTHENTICATED USER: " + authentication.getName());
+        System.out.println("AUTHORITIES: " + authentication.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
