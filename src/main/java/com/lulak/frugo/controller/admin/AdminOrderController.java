@@ -1,7 +1,5 @@
 package com.lulak.frugo.controller.admin;
 
-import com.lulak.frugo.dto.order.AdminOrderDetailDto;
-import com.lulak.frugo.dto.order.AdminOrderDto;
 import com.lulak.frugo.dto.order.AdminOrderItemDetailDto;
 import com.lulak.frugo.dto.order.AdminOrderListDto;
 import com.lulak.frugo.service.order.AdminOrderService;
