@@ -2,7 +2,10 @@ package com.lulak.frugo.controller.admin;
 
 import com.lulak.frugo.dto.order.AdminOrderDetailDto;
 import com.lulak.frugo.dto.order.AdminOrderDto;
+import com.lulak.frugo.dto.order.AdminOrderItemDetailDto;
+import com.lulak.frugo.dto.order.AdminOrderListDto;
 import com.lulak.frugo.service.order.AdminOrderService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,22 +22,27 @@ public class AdminOrderController {
     }
 
     @GetMapping
-    public List<AdminOrderDto> getOrders(
+    @PreAuthorize("hasAuthority('ORDER_READ')")
+    public List<AdminOrderListDto> getOrders(
             @RequestParam(required = false) String orderNumber,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String customerName
+            @RequestParam(required = false) String customerName,
+            @RequestParam(required = false) String statusCode
+
     ){
+        System.out.println("=== ORDERS CONTROLLER CALLED ===");
+
         return adminOrderService.getFilteredOrders(
                 orderNumber,
-                status,
-                customerName
+                customerName,
+                statusCode
         );
     }
 
-    @GetMapping("/{id}")
-    public AdminOrderDetailDto getOrderDetail(
+    @GetMapping("/{id}/items")
+    @PreAuthorize("hasAuthority('ORDER_READ')")
+    public List<AdminOrderItemDetailDto> getOrderItems(
             @PathVariable Integer id
     ){
-        return adminOrderService.getOrderDetail(id);
+        return adminOrderService.getOrderItems(id);
     }
 }

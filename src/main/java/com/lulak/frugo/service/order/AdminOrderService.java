@@ -1,11 +1,12 @@
 package com.lulak.frugo.service.order;
 
-import com.lulak.frugo.dto.order.AdminOrderDetailDto;
-import com.lulak.frugo.dto.order.AdminOrderDto;
-import com.lulak.frugo.dto.order.AdminOrderItemDto;
+import com.lulak.frugo.dto.order.*;
 import com.lulak.frugo.model.order.Order;
+import com.lulak.frugo.repository.order.OrderItemRepository;
 import com.lulak.frugo.repository.order.OrderRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -13,60 +14,32 @@ import java.util.List;
 public class AdminOrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
-    public AdminOrderService(OrderRepository orderRepository){
+    public AdminOrderService(
+            OrderRepository orderRepository,
+            OrderItemRepository orderItemRepository
+    ){
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
-    public List<AdminOrderDto> getFilteredOrders(
+    public List<AdminOrderListDto> getFilteredOrders(
             String orderNumber,
-            String status,
+            String statusCode,
             String customerName
     ){
         return orderRepository.getFilteredOrders(
                 orderNumber,
-                status,
+                statusCode,
                 customerName
-        ).stream()
-                .map(order -> new AdminOrderDto(
-                        order.getId(),
-                        order.getOrderNumber(),
-                        order.getCustomer().getId(),
-                        order.getCustomer().getName(),
-                        order.getStatus().getCode(),
-                        order.getStatus().getName(),
-                        order.getCreatedAt()
-                ))
-                .toList();
+        );
     }
 
-    public AdminOrderDetailDto getOrderDetail(Integer id){
 
-        Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found!"));
-
-        List<AdminOrderItemDto> items = order.getItems()
-                .stream()
-                .map(item -> new AdminOrderItemDto(
-                        item.getId(),
-                        item.getWarehouseItem().getProduct().getId(),
-                        item.getWarehouseItem().getProduct().getName(),
-                        item.getQuantity(),
-                        item.getPickedQuantity(),
-                        item.getStatus().getCode(),
-                        item.getStatus().getName()
-                ))
-                .toList();
-
-        return new AdminOrderDetailDto(
-                order.getId(),
-                order.getOrderNumber(),
-                order.getCustomer().getId(),
-                order.getCustomer().getName(),
-                order.getStatus().getCode(),
-                order.getStatus().getName(),
-                order.getCreatedAt(),
-                items
-        );
+    public List<AdminOrderItemDetailDto> getOrderItems(
+            Integer orderId
+    ){
+        return orderItemRepository.getOrderItems(orderId);
     }
 }
