@@ -2,20 +2,37 @@ package com.lulak.frugo.dto.employee;
 
 public class AdminEmployeeListDto {
 
-    public String employeeNumber;
-    public String firstName;
-    public String lastName;
-    public String jobPosition;
-    public String phone;
-    public String shift;
+    private Integer id;
+    private String employeeNumber;
+    private String name;
+    private String shiftCode;
+    private String departmentName;
+    private String jobPositionName;
+    private boolean active;
 
-    public AdminEmployeeListDto(String employeeNumber, String firstName, String lastName,
-                                  String position, String phoneNumber, String shift){
+    public AdminEmployeeListDto(
+            Integer id,
+            String employeeNumber,
+            String name,
+            String shiftCode,
+            String departmentName,
+            String jobPositionName,
+            boolean active
+    ){
+        this.id = id;
         this.employeeNumber = employeeNumber;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.jobPosition = position;
-        this.phone = phoneNumber;
-        this.shift = shift;
+        this.name = name;
+        this.shiftCode = shiftCode;
+        this.departmentName = departmentName;
+        this.jobPositionName = jobPositionName;
+        this.active = active;
     }
+
+    public Integer getId(){ return id; }
+    public String getEmployeeNumber(){ return employeeNumber; }
+    public String getName(){ return name; }
+    public String getShiftCode(){ return shiftCode; }
+    public String getDepartmentName(){ return departmentName; }
+    public String getJobPositionName(){ return jobPositionName; }
+    public boolean isActive(){ return active; }
 }
