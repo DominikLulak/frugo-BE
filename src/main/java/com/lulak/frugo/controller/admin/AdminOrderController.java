@@ -27,8 +27,6 @@ public class AdminOrderController {
             @RequestParam(required = false) String statusCode
 
     ){
-        System.out.println("=== ORDERS CONTROLLER CALLED ===");
-
         return adminOrderService.getFilteredOrders(
                 orderNumber,
                 customerName,

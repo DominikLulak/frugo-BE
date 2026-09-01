@@ -1,36 +1,51 @@
 package com.lulak.frugo.repository.shipment;
 
-import com.lulak.frugo.model.order.Order;
+import com.lulak.frugo.dto.shipment.AdminShipmentListDto;
 import com.lulak.frugo.model.shipment.Shipment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface ShipmentRepository extends JpaRepository<Shipment, Integer> {
 
     @Query("""
-        SELECT s FROM Shipment s
-        WHERE (:shipmentNumber IS NULL 
-            OR s.shipmentNumber LIKE CONCAT('%', :shipmentNumber, '%'))
+        SELECT new com.lulak.frugo.dto.shipment.AdminShipmentListDto(
+            s.id,
+            s.shipmentNumber,
+            s.order.orderNumber,
+            s.status.code
+        )
+        FROM Shipment s
+        WHERE
+            (
+                COALESCE(:shipmentNumber, '') = ''
+                OR s.shipmentNumber LIKE CONCAT('%', COALESCE(:shipmentNumber, ''), '%') 
+            )
         
-        AND (:orderNumber IS NULL
-            OR s.order.orderNumber LIKE CONCAT('%', :orderNumber, '%'))
+        AND (
+            COALESCE(:orderNumber, '') = ''
+            OR s.order.orderNumber LIKE CONCAT('%', COALESCE(:orderNumber, ''), '%') 
+        )
         
-        AND (:status IS NULL 
-            OR s.status.code = :status)
-        
-        AND (:customerName IS NULL 
-            OR LOWER(s.order.customer.name)
-                LIKE LOWER(CONCAT('%', :customerName, '%')))
+        AND (
+            COALESCE(:statusCode, '') = ''
+            OR s.status.code = COALESCE(:statusCode, '') 
+        )
     """)
-
-    List<Shipment>getFilteredShipments(
-            String shipmentNumber,
-            String orderNumber,
-            String status,
-            String customerName
+    List<AdminShipmentListDto> getFiltered(
+            @Param("shipmentNumber") String shipmentNumber,
+            @Param("orderNumber") String orderNumber,
+            @Param("statusCode") String statusCode
     );
 
-    String order(Order order);
+    @Query("""
+        SELECT s
+        FROM Shipment s
+        WHERE s.id = :id
+    """)
+    Shipment findShipmentById(
+            @Param("id") Integer id
+    );
 }

@@ -1,28 +1,26 @@
 package com.lulak.frugo.dto.shipment;
 
-import java.util.List;
+public class AdminShipmentListDto {
 
-public class AdminShipmentDetailDto {
+    private Integer id;
+    private String shipmentNumber;
+    private String orderNumber;
+    private String statusCode;
 
-    public String shipmentNumber;
-    public String orderNumber;
-    public String statusCode;
-    public List<AdminShipmentItemDto> pallets;
-
-    public AdminShipmentDetailDto(
+    public AdminShipmentListDto(
+            Integer id,
             String shipmentNumber,
             String orderNumber,
-            String statusCode,
-            List<AdminShipmentItemDto> pallets
+            String statusCode
     ){
+        this.id = id;
         this.shipmentNumber = shipmentNumber;
         this.orderNumber = orderNumber;
         this.statusCode = statusCode;
-        this.pallets = pallets;
     }
 
+    public Integer getId(){ return id; }
     public String getShipmentNumber(){ return shipmentNumber; }
     public String getOrderNumber(){ return orderNumber; }
     public String getStatusCode(){ return statusCode; }
-    public List<AdminShipmentItemDto> getPallets(){ return pallets; }
 }

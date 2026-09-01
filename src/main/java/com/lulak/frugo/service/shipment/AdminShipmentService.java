@@ -1,8 +1,8 @@
 package com.lulak.frugo.service.shipment;
 
 import com.lulak.frugo.dto.shipment.AdminShipmentDetailDto;
-import com.lulak.frugo.dto.shipment.AdminShipmentDto;
 import com.lulak.frugo.dto.shipment.AdminShipmentItemDto;
+import com.lulak.frugo.dto.shipment.AdminShipmentListDto;
 import com.lulak.frugo.model.shipment.Shipment;
 import com.lulak.frugo.repository.shipment.ShipmentItemRepository;
 import com.lulak.frugo.repository.shipment.ShipmentRepository;
@@ -24,46 +24,35 @@ public class AdminShipmentService {
         this.shipmentItemRepository = shipmentItemRepository;
     }
 
-    public List<AdminShipmentDto> getFilteredShipments(
+    public List<AdminShipmentListDto> getFilteredShipments(
             String shipmentNumber,
             String orderNumber,
-            String status,
-            String customerName
+            String statusCode
     ){
-        return shipmentRepository.getFilteredShipments(
+        return shipmentRepository.getFiltered(
                 shipmentNumber,
                 orderNumber,
-                status,
-                customerName
-        ).stream()
-                .map(shipment -> new AdminShipmentDto(
-                        shipment.getShipmentNumber(),
-                        shipment.getOrder().getOrderNumber(),
-                        shipment.getStatus().getName(),
-                        shipment.getOrder().getCustomer().getName()
-                ))
-                .toList();
+                statusCode
+        );
     }
 
-    public AdminShipmentDetailDto getShipmentDetail(Integer id){
-        Shipment shipment = shipmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Shipment not found!"));
+    public AdminShipmentDetailDto getShipmentDetail(
+            Integer id
+    ){
+        Shipment shipment = shipmentRepository.findShipmentById(id);
 
-        List<AdminShipmentItemDto> items =
-                shipmentItemRepository.findByShipment_Id(id)
-                        .stream()
-                        .map(item -> new AdminShipmentItemDto(
-                                item.getPallet().getPalletNumber(),
-                                item.getStatus().getName()
-                        ))
-                        .toList();
+        if(shipment == null){
+            throw new RuntimeException("Shipment not found");
+        }
+
+        List<AdminShipmentItemDto> pallets =
+                shipmentItemRepository.getShipmentPallet(id);
 
         return new AdminShipmentDetailDto(
                 shipment.getShipmentNumber(),
                 shipment.getOrder().getOrderNumber(),
-                shipment.getOrder().getCustomer().getName(),
-                shipment.getStatus().getName(),
-                items
+                shipment.getStatus().getCode(),
+                pallets
         );
     }
 }
