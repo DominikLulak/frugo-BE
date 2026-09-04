@@ -1,39 +1,52 @@
 package com.lulak.frugo.dto.customer;
 
+import java.util.List;
+
 public class AdminCustomerDetailDto {
 
-    public Integer id;
-    public String name;
-    public String companyId;
-    public String street;
-    public String houseNumber;
-    public String city;
-    public String postalCode;
-    public String countryCode;
-    public String countryName;
-    public boolean registered;
+    private Integer id;
+    private String name;
+    private String companyId;
+    private String countryCode;
+    private String city;
+    private String postalCode;
+    private String street;
+    private String houseNumber;
+    private boolean registered;
+    private List<AdminCustomerContactDto> contacts;
 
     public AdminCustomerDetailDto(
             Integer id,
             String name,
             String companyId,
-            String street,
-            String houseNumber,
+            String countryCode,
             String city,
             String postalCode,
-            String countryCode,
-            String countryName,
-            boolean registered
+            String street,
+            String houseNumber,
+            boolean registered,
+            List<AdminCustomerContactDto> contacts
     ){
         this.id = id;
         this.name = name;
         this.companyId = companyId;
-        this.street = street;
-        this.houseNumber = houseNumber;
+        this.countryCode = countryCode;
         this.city = city;
         this.postalCode = postalCode;
-        this.countryCode = countryCode;
-        this.countryName = countryName;
+        this.street = street;
+        this.houseNumber = houseNumber;
         this.registered = registered;
+        this.contacts = contacts;
     }
+
+    public Integer getId(){ return id; }
+    public String getName(){ return name; }
+    public String getCompanyId(){ return companyId; }
+    public String getCountryCode(){ return countryCode; }
+    public String getCity(){ return city; }
+    public String getPostalCode(){ return postalCode; }
+    public String getStreet(){ return street; }
+    public String getHouseNumber(){ return houseNumber; }
+    public boolean isRegistered(){ return registered; }
+    public List<AdminCustomerContactDto> getContacts(){ return contacts; }
 }

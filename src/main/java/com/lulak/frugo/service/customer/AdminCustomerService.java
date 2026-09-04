@@ -1,8 +1,10 @@
 package com.lulak.frugo.service.customer;
 
+import com.lulak.frugo.dto.customer.AdminCustomerContactDto;
 import com.lulak.frugo.dto.customer.AdminCustomerDetailDto;
 import com.lulak.frugo.dto.customer.AdminCustomerListDto;
 import com.lulak.frugo.model.customer.Customer;
+import com.lulak.frugo.repository.customer.CustomerContactRepository;
 import com.lulak.frugo.repository.customer.CustomerRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,40 +14,63 @@ import java.util.List;
 public class AdminCustomerService {
 
     private final CustomerRepository customerRepository;
+    private final CustomerContactRepository customerContactRepository;
 
-    public AdminCustomerService(CustomerRepository customerRepository){
+    public AdminCustomerService(
+            CustomerRepository customerRepository,
+            CustomerContactRepository customerContactRepository
+    ){
         this.customerRepository = customerRepository;
+        this.customerContactRepository = customerContactRepository;
     }
 
     public List<AdminCustomerListDto> getFilteredCustomers(
             String name,
             String companyId,
+            String countryCode,
             String city,
-            String postalCode
+            String postalCode,
+            Boolean registered
     ){
         return customerRepository.getFilteredCustomers(
                 name,
                 companyId,
+                countryCode,
                 city,
-                postalCode
+                postalCode,
+                registered
         );
     }
 
     public AdminCustomerDetailDto getCustomerDetail(Integer id){
-        Customer c = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found!"));
+
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Customer not found: " + id)
+                );
+        List<AdminCustomerContactDto> contacts =
+                customerContactRepository.findByCustomerId(id)
+                        .stream()
+                        .map(contact -> new AdminCustomerContactDto(
+                                contact.getId(),
+                                contact.getName(),
+                                contact.getPhoneNumber(),
+                                contact.getEmail(),
+                                contact.isPrimary()
+                        ))
+                        .toList();
 
         return new AdminCustomerDetailDto(
-                c.getId(),
-                c.getName(),
-                c.getCompanyId(),
-                c.getStreet(),
-                c.getHouseNumber(),
-                c.getCity(),
-                c.getPostalCode(),
-                c.getCountry().getCode(),
-                c.getCountry().getName(),
-                c.isRegistered()
+                customer.getId(),
+                customer.getName(),
+                customer.getCompanyId(),
+                customer.getCountry().getCode(),
+                customer.getCity(),
+                customer.getPostalCode(),
+                customer.getStreet(),
+                customer.getHouseNumber(),
+                customer.isRegistered(),
+                contacts
         );
     }
 }

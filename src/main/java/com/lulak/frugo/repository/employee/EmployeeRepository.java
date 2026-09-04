@@ -20,7 +20,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>  {
             s.code,
             d.name,
             jp.name,
-            e.active    
+            e.active   \s
         )
         FROM Employee e
         JOIN e.shift s
@@ -32,36 +32,36 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>  {
                 OR LOWER(e.employeeNumber)
                     LIKE LOWER(CONCAT('%', :employeeNumber, '%'))
             )
-        
+       \s
         AND (
             COALESCE(:name, '') = ''
             OR LOWER(CONCAT(e.firstName, ' ', e.lastName))
-                LIKE LOWER(CONCAT('%', :name, '%')) 
+                LIKE LOWER(CONCAT('%', :name, '%'))\s
         )
-        
+       \s
         AND (
             COALESCE(:shiftCode, '') = ''
             OR LOWER(s.code)
-                LIKE LOWER(CONCAT('%', :shiftCode, '%')) 
+                LIKE LOWER(CONCAT('%', :shiftCode, '%'))\s
         )
-        
+       \s
         AND(
             COALESCE(:departmentName, '') = ''
             OR LOWER(d.name)
-                LIKE LOWER(CONCAT('%', :departmentName, '%')) 
+                LIKE LOWER(CONCAT('%', :departmentName, '%'))\s
         )
-        
+       \s
         AND(
             COALESCE(:jobPositionName, '') = ''
             OR LOWER(jp.name)
-                LIKE LOWER(CONCAT('%', :jobPositionName, '%')) 
+                LIKE LOWER(CONCAT('%', :jobPositionName, '%'))\s
         )
-        
+       \s
         AND(
-            :isActive IS NULL 
+            :isActive IS NULL\s
             OR e.active = :isActive
         )
-    """)
+   \s""")
     List<AdminEmployeeListDto> getFilteredEmployees(
             @Param("employeeNumber") String employeeNumber,
             @Param("name") String name,
