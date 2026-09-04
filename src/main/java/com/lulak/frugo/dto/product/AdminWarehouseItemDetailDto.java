@@ -12,6 +12,7 @@ public class AdminWarehouseItemDetailDto {
     private String productName;
     private String productCode;
 
+    private String palletNumber;
     private String etiNumber;
 
     private String packagingType;
@@ -38,6 +39,7 @@ public class AdminWarehouseItemDetailDto {
             String productType,
             String productName,
             String productCode,
+            String palletNumber,
             String etiNumber,
             String packagingType,
             Integer quantityPerPackage,
@@ -57,6 +59,7 @@ public class AdminWarehouseItemDetailDto {
         this.productType = productType;
         this.productName = productName;
         this.productCode = productCode;
+        this.palletNumber = palletNumber;
         this.etiNumber = etiNumber;
         this.packagingType = packagingType;
         this.quantityPerPackage = quantityPerPackage;
@@ -77,6 +80,7 @@ public class AdminWarehouseItemDetailDto {
     public String getProductType(){ return productType; }
     public String getProductName(){ return productName; }
     public String getProductCode(){ return productCode; }
+    public String getPalletNumber(){ return palletNumber; }
     public String getEtiNumber(){ return etiNumber; }
     public String getPackagingType(){ return packagingType; }
     public Integer getQuantityPerPackage(){ return quantityPerPackage; }
