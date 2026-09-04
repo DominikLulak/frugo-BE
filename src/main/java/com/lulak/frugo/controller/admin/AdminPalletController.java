@@ -1,5 +1,6 @@
 package com.lulak.frugo.controller.admin;
 
+import com.lulak.frugo.dto.pallet.AdminPalletListDto;
 import com.lulak.frugo.dto.pallet.AdminPalletWarehouseItemDto;
 import com.lulak.frugo.service.pallet.AdminPalletService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,8 +21,22 @@ public class AdminPalletController {
         this.adminPalletService = adminPalletService;
     }
 
+    @GetMapping
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public List<AdminPalletListDto> getFilteredPallets(
+            @RequestParam(required = false) String etiNumber,
+            @RequestParam(required = false) String locationCode,
+            @RequestParam(required = false) Boolean isClosed
+    ){
+        return adminPalletService.getFilteredPallets(
+                etiNumber,
+                locationCode,
+                isClosed
+        );
+    }
+
     @GetMapping("/{id}/items")
-    @PreAuthorize("hasAuthority('SHIPMENT_READ')")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public List<AdminPalletWarehouseItemDto> getPalletItems(
             @PathVariable Integer id
     ){
