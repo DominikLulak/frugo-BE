@@ -30,27 +30,40 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException{
 
-        String auth = request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization");
 
-        if(auth != null && auth.startsWith("Bearer ")){
-
-            String token = auth.substring(7);
-
-            if(jwtSecurity.isTokenValid(token)){
-
-                String username = jwtSecurity.extractUsername(token);
-                String role = jwtSecurity.extractRole(token);
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                username,
-                                null,
-                                List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                        );
-                SecurityContextHolder.getContext()
-                        .setAuthentication(authentication);
-            }
+        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        String token = authHeader.substring(7);
+
+        if(!jwtSecurity.isTokenValid(token)){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String username = jwtSecurity.extractUsername(token);
+
+        List<String> permissions =
+                jwtSecurity.extractPermissions(token);
+
+        List<SimpleGrantedAuthority> authorities = permissions.stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(
+                        username,
+                        null,
+                        authorities
+                );
+
+        System.out.println("AUTHENTICATED USER: " + authentication.getName());
+        System.out.println("AUTHORITIES: " + authentication.getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
     }

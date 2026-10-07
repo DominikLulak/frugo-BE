@@ -1,7 +1,7 @@
 package com.lulak.frugo.service;
 
-import com.lulak.frugo.model.Product;
-import com.lulak.frugo.repository.ProductRepository;
+import com.lulak.frugo.model.product.Product;
+import com.lulak.frugo.repository.product.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,14 +24,6 @@ public class ProductService {
            return repository.findAll();
        }
 
-       return repository.findByCategory(category);
-   }
-
-   public List<String> getCategories(){
-       return repository.findAll()
-               .stream()
-               .map(Product::getCategory)
-               .distinct()
-               .toList();
+       return repository.findByProductType_Category_Code(category);
    }
 }
