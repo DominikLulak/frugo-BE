@@ -56,4 +56,6 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, In
     PurchaseOrder findPurchaseOrderById(
             @Param("id") Integer id
     );
+
+    boolean existsBySupplierId(Integer supplierId);
 }

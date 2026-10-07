@@ -14,7 +14,8 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
         SELECT new com.lulak.frugo.dto.purchaseOrders.AdminSupplierListDto(
             sup.id,
             sup.name,
-            sup.internalCode
+            sup.internalCode,
+            sup.active
         )
         FROM Supplier sup
         WHERE (
@@ -25,9 +26,14 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
             COALESCE(:internalCode, '') = ''
             OR sup.internalCode LIKE CONCAT('%', :internalCode, '%') 
         )
+        AND(
+           :isActive IS NULL
+           OR sup.active = :isActive     
+        )
     """)
     List<AdminSupplierListDto> getFilteredSuppliers(
             @Param("name") String name,
-            @Param("internalCode") String internalCode
+            @Param("internalCode") String internalCode,
+            @Param("isActive") Boolean isActive
     );
 }

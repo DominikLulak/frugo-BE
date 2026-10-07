@@ -16,11 +16,17 @@ public class Supplier {
     @Column(name = "internal_code", nullable = false, unique = true)
     private String internalCode;
 
+    @Column(name = "is_active", nullable = false)
+    private boolean active;
+
     public Integer getId(){ return id; }
 
     public String getName(){ return name; }
     public void setName(String name){ this.name = name; }
 
     public String getInternalCode(){ return internalCode; }
-    public void setInternalCode(){ this.internalCode = internalCode; }
+    public void setInternalCode(String internalCode){ this.internalCode = internalCode; }
+
+    public boolean isActive(){ return active; }
+    public void setActive(boolean active){ this.active = active; }
 }
