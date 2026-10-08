@@ -88,4 +88,18 @@ public class AdminPurchaseOrderController {
         );
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @DeleteMapping("/{purchaseOrderId}/items/{itemId}")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> deletePurchaseOrderItem(
+            @PathVariable Integer purchaseOrderId,
+            @PathVariable Integer itemId
+    ){
+        purchaseOrderService.deletePurchaseOrderItem(
+                purchaseOrderId,
+                itemId
+        );
+
+        return ResponseEntity.noContent().build();
+    }
 }

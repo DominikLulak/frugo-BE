@@ -281,4 +281,33 @@ public class AdminPurchaseOrderService {
 
         purchaseOrderItemRepository.save(item);
     }
+
+    @Transactional
+    public void deletePurchaseOrderItem(
+            Integer purchaseOrderId,
+            Integer itemId
+    ){
+        PurchaseOrder purchaseOrder = purchaseOrderRepository
+                .findPurchaseOrderById(purchaseOrderId);
+
+        if(purchaseOrder == null){
+            throw new RuntimeException("Purchase order not found! " + purchaseOrderId);
+        }
+
+        String statusCode = purchaseOrder.getStatus().getCode();
+
+        if("COMPLETED".equals(statusCode) || "CANCELED".equals(statusCode)){
+            throw new RuntimeException("Purchase order cannot be modified din status " + statusCode);
+        }
+
+        PurchaseOrderItem item = purchaseOrderItemRepository
+                .findByIdAndPurchaseOrderId(itemId, purchaseOrderId)
+                .orElseThrow(() -> new RuntimeException("Purchase order item not found " + itemId));
+
+        if(item.getReceivedQuantity() > 0){
+            throw new RuntimeException("Purchase order item cannot be deleted because some quantity has already been received");
+        }
+
+        purchaseOrderItemRepository.delete(item);
+    }
 }
