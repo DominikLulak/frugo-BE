@@ -102,6 +102,7 @@ public class AdminPurchaseOrderService {
 
         return new AdminPurchaseOrderDetailDto(
                 purchaseOrder.getPurchaseOrderNumber(),
+                purchaseOrder.getSupplier().getId(),
                 purchaseOrder.getSupplier().getName(),
                 purchaseOrder.getSupplier().getInternalCode(),
                 purchaseOrder.getCreatedAt(),
@@ -340,5 +341,42 @@ public class AdminPurchaseOrderService {
 
         purchaseOrderItemRepository.deleteByPurchaseOrderId(purchaseOrderId);
         purchaseOrderRepository.delete(purchaseOrder);
+    }
+
+    @Transactional
+    public void updatePurchaseOrder(
+            Integer purchaseOrderId,
+            PurchaseOrderUpdateDto dto
+    ){
+        PurchaseOrder purchaseOrder =
+                purchaseOrderRepository.findPurchaseOrderById(purchaseOrderId);
+
+        if(purchaseOrder == null){
+            throw new RuntimeException("Purchase order not found " + purchaseOrderId);
+        }
+
+        String statusCode = purchaseOrder.getStatus().getCode();
+
+        if(!"ENTERED".equals(statusCode) && !"BLOCKED".equals(statusCode)){
+            throw new RuntimeException("Purchase order cannot be modified in status " + statusCode);
+        }
+
+        boolean hasReceivedItems = purchaseOrderItemRepository
+                .existsByPurchaseOrderIdAndReceivedQuantityGreaterThan(purchaseOrderId, 0);
+
+        if(hasReceivedItems){
+            throw new RuntimeException("Purchase order cannot be modified because some quantity has already been received!");
+        }
+
+        Supplier supplier = supplierRepository
+                .findById(dto.getSupplierId())
+                .orElseThrow(() -> new RuntimeException("Supplier not found " + dto.getSupplierId()));
+
+        if(!supplier.isActive()){
+            throw new RuntimeException("Supplier is not active!");
+        }
+
+        purchaseOrder.setSupplier(supplier);
+        purchaseOrderRepository.save(purchaseOrder);
     }
 }

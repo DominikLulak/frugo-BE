@@ -114,4 +114,18 @@ public class AdminPurchaseOrderController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{purchaseOrderId}")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> updatePurchaseOrder(
+            @PathVariable Integer purchaseOrderId,
+            @Valid @RequestBody PurchaseOrderUpdateDto dto
+    ){
+        purchaseOrderService.updatePurchaseOrder(
+                purchaseOrderId,
+                dto
+        );
+
+        return ResponseEntity.noContent().build();
+    }
 }
