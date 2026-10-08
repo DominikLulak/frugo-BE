@@ -1,9 +1,6 @@
 package com.lulak.frugo.controller.admin;
 
-import com.lulak.frugo.dto.purchaseOrders.AdminPurchaseOrderDetailDto;
-import com.lulak.frugo.dto.purchaseOrders.AdminPurchaseOrderListDto;
-import com.lulak.frugo.dto.purchaseOrders.PurchaseOrderCreateDto;
-import com.lulak.frugo.dto.purchaseOrders.PurchaseOrderItemUpdateDto;
+import com.lulak.frugo.dto.purchaseOrders.*;
 import com.lulak.frugo.model.purchaseOrders.PurchaseOrder;
 import com.lulak.frugo.service.purchaseOrders.AdminPurchaseOrderService;
 import org.springframework.http.HttpStatus;
@@ -77,5 +74,18 @@ public class AdminPurchaseOrderController {
         );
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{purchaseOrderId}/items")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> addPurchaseOrderItem(
+            @PathVariable Integer purchaseOrderId,
+            @Valid @RequestBody PurchaseOrderItemCreateDto dto
+    ){
+        purchaseOrderService.addPurchaseOrderItem(
+                purchaseOrderId,
+                dto
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

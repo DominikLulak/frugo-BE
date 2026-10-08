@@ -17,7 +17,9 @@ public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrder
             poi.product.productType.category.code,
             poi.product.productType.name,
             poi.product.name,
+            poi.country.id,
             poi.country.code,
+            poi.country.name,
             poi.quantity,
             poi.receivedQuantity,
             poi.status.code

@@ -18,6 +18,7 @@ import com.lulak.frugo.repository.referenceData.CountryRepository;
 import com.lulak.frugo.repository.referenceData.StatusRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,6 +36,25 @@ public class AdminPurchaseOrderService {
     private final StatusRepository statusRepository;
     private final ProductRepository productRepository;
     private final CountryRepository countryRepository;
+
+    private PurchaseOrderItem createPurchaseOrderItem(
+            PurchaseOrder purchaseOrder,
+            Product product,
+            Country country,
+            Status status,
+            Integer quantity
+    ){
+        PurchaseOrderItem item = new PurchaseOrderItem();
+
+        item.setPurchaseOrder(purchaseOrder);
+        item.setProduct(product);
+        item.setQuantity(quantity);
+        item.setReceivedQuantity(0);
+        item.setCountry(country);
+        item.setStatus(status);
+
+        return item;
+    }
 
     public AdminPurchaseOrderService(
             PurchaseOrderRepository purchaseOrderRepository,
@@ -170,13 +190,13 @@ public class AdminPurchaseOrderService {
             Status itemStatus = statusRepository.findByCode("ENTERED")
                     .orElseThrow(() -> new RuntimeException("Purchase order item status ENTERED not found!"));
 
-            PurchaseOrderItem item = new PurchaseOrderItem();
-            item.setPurchaseOrder(purchaseOrder);
-            item.setProduct(product);
-            item.setQuantity(itemDto.getQuantity());
-            item.setReceivedQuantity(0);
-            item.setCountry(country);
-            item.setStatus(itemStatus);
+            PurchaseOrderItem item = createPurchaseOrderItem(
+                    purchaseOrder,
+                    product,
+                    country,
+                    itemStatus,
+                    itemDto.getQuantity()
+            );
 
             purchaseOrderItemRepository.save(item);
         }
@@ -207,11 +227,57 @@ public class AdminPurchaseOrderService {
                 .findByIdAndPurchaseOrderId(itemId, purchaseOrderId)
                 .orElseThrow(() -> new RuntimeException("Purchase order item not found " + itemId));
 
+        Country country = countryRepository
+                .findById(dto.getCountryId())
+                .orElseThrow(() -> new RuntimeException("Country not found " + dto.getCountryId()));
+
         if(dto.getQuantity() < item.getReceivedQuantity()){
             throw new RuntimeException("Quantity cannot be lower than received quantity!");
         }
 
         item.setQuantity(dto.getQuantity());
+        item.setCountry(country);
+
+        purchaseOrderItemRepository.save(item);
+    }
+
+    @Transactional
+    public void addPurchaseOrderItem(
+            Integer purchaseOrderId,
+            PurchaseOrderItemCreateDto dto
+    ){
+        PurchaseOrder purchaseOrder = purchaseOrderRepository
+                .findPurchaseOrderById(purchaseOrderId);
+
+        if(purchaseOrder == null){
+            throw new RuntimeException("Purchase order not found: " + purchaseOrderId);
+        }
+
+        String statusCode = purchaseOrder.getStatus().getCode();
+
+        if("COMPLETED".equals(statusCode) || "CANCELED".equals(statusCode)){
+            throw new RuntimeException("Purchase order cannot be modified in status " + statusCode);
+        }
+
+        Product product = productRepository
+                .findById(dto.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found " + dto.getProductId()));
+
+        Country country = countryRepository
+                .findById(dto.getCountryId())
+                .orElseThrow(() -> new RuntimeException("Country not found " + dto.getCountryId()));
+
+        Status status = statusRepository
+                .findByCode("ENTERED")
+                .orElseThrow(() -> new RuntimeException("Status ENTERED not found"));
+
+        PurchaseOrderItem item = createPurchaseOrderItem(
+                purchaseOrder,
+                product,
+                country,
+                status,
+                dto.getQuantity()
+        );
 
         purchaseOrderItemRepository.save(item);
     }
