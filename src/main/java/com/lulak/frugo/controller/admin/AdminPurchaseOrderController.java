@@ -2,10 +2,16 @@ package com.lulak.frugo.controller.admin;
 
 import com.lulak.frugo.dto.purchaseOrders.AdminPurchaseOrderDetailDto;
 import com.lulak.frugo.dto.purchaseOrders.AdminPurchaseOrderListDto;
+import com.lulak.frugo.dto.purchaseOrders.PurchaseOrderCreateDto;
+import com.lulak.frugo.dto.purchaseOrders.PurchaseOrderItemUpdateDto;
+import com.lulak.frugo.model.purchaseOrders.PurchaseOrder;
 import com.lulak.frugo.service.purchaseOrders.AdminPurchaseOrderService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -43,5 +49,33 @@ public class AdminPurchaseOrderController {
             @PathVariable Integer id
     ){
         return purchaseOrderService.getPurchaseOrderDetail(id);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<PurchaseOrder> createPurchaseOrder(
+            @Valid @RequestBody PurchaseOrderCreateDto dto
+    ){
+        PurchaseOrder purchaseOrder = purchaseOrderService.cretePurchaseOrder(dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(purchaseOrder);
+    }
+
+    @PutMapping("/{purchaseOrderId}/items/{itemId}")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> updatePurchaseOrderItem(
+            @PathVariable Integer purchaseOrderId,
+            @PathVariable Integer itemId,
+            @Valid @RequestBody PurchaseOrderItemUpdateDto dto
+    ){
+        purchaseOrderService.updatePurchaseOrderItem(
+                purchaseOrderId,
+                itemId,
+                dto
+        );
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrderItem, Integer> {
 
     @Query("""
         SELECT new com.lulak.frugo.dto.purchaseOrders.AdminPurchaseOrderItemDto(
+            poi.id,
             poi.product.productType.category.code,
             poi.product.productType.name,
             poi.product.name,
@@ -25,5 +27,10 @@ public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrder
     """)
     List<AdminPurchaseOrderItemDto> getPurchaseOrderItems(
             @Param("purchaseOrderId") Integer purchaseOrderId
+    );
+
+    Optional<PurchaseOrderItem> findByIdAndPurchaseOrderId(
+            Integer itemId,
+            Integer purchaseOrderId
     );
 }

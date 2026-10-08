@@ -2,6 +2,7 @@ package com.lulak.frugo.dto.purchaseOrders;
 
 public class AdminPurchaseOrderItemDto {
 
+    private Integer id;
     private String categoryCode;
     private String productType;
     private String productName;
@@ -11,6 +12,7 @@ public class AdminPurchaseOrderItemDto {
     private String statusCode;
 
     public AdminPurchaseOrderItemDto(
+            Integer id,
             String categoryCode,
             String productType,
             String productName,
@@ -19,6 +21,7 @@ public class AdminPurchaseOrderItemDto {
             Integer receivedQuantity,
             String statusCode
     ){
+        this.id = id;
         this.categoryCode = categoryCode;
         this.productType = productType;
         this.productName = productName;
@@ -28,6 +31,7 @@ public class AdminPurchaseOrderItemDto {
         this.statusCode = statusCode;
     }
 
+    public Integer getId(){ return id; }
     public String getCategoryCode(){ return categoryCode; }
     public String getProductType(){ return productType; }
     public String getProductName(){ return productName; }
