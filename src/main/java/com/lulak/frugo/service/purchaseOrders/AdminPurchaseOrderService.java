@@ -310,4 +310,35 @@ public class AdminPurchaseOrderService {
 
         purchaseOrderItemRepository.delete(item);
     }
+
+    @Transactional
+    public void deletePurchaseOrder(Integer purchaseOrderId){
+        PurchaseOrder purchaseOrder =
+                purchaseOrderRepository.findPurchaseOrderById(purchaseOrderId);
+
+        if(purchaseOrder == null){
+            throw new RuntimeException("Purchase order not found " + purchaseOrderId);
+        }
+
+        String statusCode = purchaseOrder.getStatus().getCode();
+
+        if(!"ENTERED".equals(statusCode) && !"BLOCKED".equals(statusCode)){
+            throw new RuntimeException("Purchase order cannot be deleted in status " + statusCode);
+        }
+
+        boolean hasReceivedQuantity =
+                purchaseOrderItemRepository
+                        .existsByPurchaseOrderIdAndReceivedQuantityGreaterThan(
+                                purchaseOrderId,
+                                0
+                        );
+        if(hasReceivedQuantity){
+            throw new RuntimeException(
+                    "Purchase order cannot be deleted because some quantity has already been received!"
+            );
+        }
+
+        purchaseOrderItemRepository.deleteByPurchaseOrderId(purchaseOrderId);
+        purchaseOrderRepository.delete(purchaseOrder);
+    }
 }

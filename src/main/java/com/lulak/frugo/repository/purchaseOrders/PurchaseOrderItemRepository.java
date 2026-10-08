@@ -35,4 +35,11 @@ public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrder
             Integer itemId,
             Integer purchaseOrderId
     );
+
+    void deleteByPurchaseOrderId(Integer purchaseOrderId);
+
+    boolean existsByPurchaseOrderIdAndReceivedQuantityGreaterThan(
+            Integer purchaseOrderId,
+            Integer receivedQuantity
+    );
 }
