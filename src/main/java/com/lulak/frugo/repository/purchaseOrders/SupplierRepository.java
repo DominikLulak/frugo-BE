@@ -30,6 +30,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
            :isActive IS NULL
            OR sup.active = :isActive     
         )
+        ORDER BY sup.id
     """)
     List<AdminSupplierListDto> getFilteredSuppliers(
             @Param("name") String name,

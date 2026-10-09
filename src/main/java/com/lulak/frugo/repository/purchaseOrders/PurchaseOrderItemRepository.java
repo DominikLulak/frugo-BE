@@ -26,6 +26,7 @@ public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrder
         )
         FROM PurchaseOrderItem poi
         WHERE poi.purchaseOrder.id = :purchaseOrderId
+        ORDER BY poi.id
     """)
     List<AdminPurchaseOrderItemDto> getPurchaseOrderItems(
             @Param("purchaseOrderId") Integer purchaseOrderId
