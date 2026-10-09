@@ -8,6 +8,7 @@ import com.lulak.frugo.model.employee.EmployeeLogin;
 import com.lulak.frugo.model.product.Product;
 import com.lulak.frugo.model.purchaseOrders.PurchaseOrder;
 import com.lulak.frugo.model.purchaseOrders.PurchaseOrderItem;
+import com.lulak.frugo.model.purchaseOrders.PurchaseOrderStatusHistory;
 import com.lulak.frugo.model.purchaseOrders.Supplier;
 import com.lulak.frugo.repository.employee.EmployeeLoginRepository;
 import com.lulak.frugo.repository.product.ProductRepository;
@@ -37,6 +38,8 @@ public class AdminPurchaseOrderService {
     private final ProductRepository productRepository;
     private final CountryRepository countryRepository;
 
+    private final PurchaseOrderStatusHistoryService statusHistoryService;
+
     private PurchaseOrderItem createPurchaseOrderItem(
             PurchaseOrder purchaseOrder,
             Product product,
@@ -63,7 +66,8 @@ public class AdminPurchaseOrderService {
             EmployeeLoginRepository employeeLoginRepository,
             StatusRepository statusRepository,
             ProductRepository productRepository,
-            CountryRepository countryRepository
+            CountryRepository countryRepository,
+            PurchaseOrderStatusHistoryService statusHistoryService
     ){
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.purchaseOrderItemRepository = purchaseOrderItemRepository;
@@ -72,6 +76,7 @@ public class AdminPurchaseOrderService {
         this.statusRepository = statusRepository;
         this.productRepository = productRepository;
         this.countryRepository = countryRepository;
+        this.statusHistoryService = statusHistoryService;
     }
 
     public List<AdminPurchaseOrderListDto> getFilteredPurchaseOrders(
@@ -113,7 +118,7 @@ public class AdminPurchaseOrderService {
     }
 
     @Transactional
-    public PurchaseOrder cretePurchaseOrder(
+    public PurchaseOrder createPurchaseOrder(
             PurchaseOrderCreateDto dto
     ){
         // Find supplier
@@ -197,6 +202,15 @@ public class AdminPurchaseOrderService {
                     country,
                     itemStatus,
                     itemDto.getQuantity()
+            );
+
+            //Create status history
+            statusHistoryService.recordStatusChange(
+                    purchaseOrder,
+                    null,
+                    orderStatus,
+                    employee,
+                    "Vytvoření objednávky"
             );
 
             purchaseOrderItemRepository.save(item);
@@ -378,5 +392,59 @@ public class AdminPurchaseOrderService {
 
         purchaseOrder.setSupplier(supplier);
         purchaseOrderRepository.save(purchaseOrder);
+    }
+
+    @Transactional
+    public void changePurchasedOrderStatus(
+            Integer purchaseOrderId,
+            String newStatusCode,
+            String note
+    ){
+        PurchaseOrder purchaseOrder =
+                purchaseOrderRepository.findPurchaseOrderById(purchaseOrderId);
+
+        if(purchaseOrder == null){
+            throw new RuntimeException("Purchase order not found " + purchaseOrderId);
+        }
+
+        if(note == null || note.isBlank()){
+            throw new RuntimeException("A note is required when changing the purchase order status!");
+        }
+
+        Status oldStatus = purchaseOrder.getStatus();
+        String oldStatusCode = oldStatus.getCode();
+
+        boolean allowed =
+                ("ENTERED".equals(oldStatusCode) && ("BLOCKED".equals(newStatusCode) || "CANCELED".equals(newStatusCode)))
+                || ("BLOCKED".equals(oldStatusCode) && ("CANCELED".equals(newStatusCode) || "ENTERED".equals(newStatusCode)));
+
+        if(!allowed){
+            throw new RuntimeException("Status transition not allowed: " + oldStatus + " -> " + newStatusCode);
+        }
+
+        Status newStatus = statusRepository.findByCode(newStatusCode)
+                .orElseThrow(() -> new RuntimeException("Status not found " + newStatusCode));
+
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        EmployeeLogin employeeLogin =
+                employeeLoginRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("Login to found "+ username));
+
+        Employee employee = employeeLogin.getEmployee();
+
+        purchaseOrder.setStatus(newStatus);
+        purchaseOrderRepository.save(purchaseOrder);
+
+        statusHistoryService.recordStatusChange(
+                purchaseOrder,
+                oldStatus,
+                newStatus,
+                employee,
+                note.trim()
+        );
     }
 }

@@ -53,7 +53,7 @@ public class AdminPurchaseOrderController {
     public ResponseEntity<PurchaseOrder> createPurchaseOrder(
             @Valid @RequestBody PurchaseOrderCreateDto dto
     ){
-        PurchaseOrder purchaseOrder = purchaseOrderService.cretePurchaseOrder(dto);
+        PurchaseOrder purchaseOrder = purchaseOrderService.createPurchaseOrder(dto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -124,6 +124,21 @@ public class AdminPurchaseOrderController {
         purchaseOrderService.updatePurchaseOrder(
                 purchaseOrderId,
                 dto
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{purchaseOrderId}/status")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> changePurchaseOrderStatus(
+            @PathVariable Integer purchaseOrderId,
+            @Valid @RequestBody PurchaseOrderStatusChangeDto dto
+    ){
+        purchaseOrderService.changePurchasedOrderStatus(
+                purchaseOrderId,
+                dto.getStatusCode(),
+                dto.getNote()
         );
 
         return ResponseEntity.noContent().build();
