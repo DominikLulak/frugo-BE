@@ -415,7 +415,7 @@ public class AdminPurchaseOrderService {
         String oldStatusCode = oldStatus.getCode();
 
         boolean allowed =
-                ("ENTERED".equals(oldStatusCode) && ("BLOCKED".equals(newStatusCode) || "CANCELED".equals(newStatusCode)))
+                ("ENTERED".equals(oldStatusCode) && ("BLOCKED".equals(newStatusCode) || "CANCELLED".equals(newStatusCode)))
                 || ("BLOCKED".equals(oldStatusCode) && ("CANCELED".equals(newStatusCode) || "ENTERED".equals(newStatusCode)));
 
         if(!allowed){
