@@ -6,6 +6,7 @@ import java.util.List;
 public class AdminPurchaseOrderDetailDto {
 
     private String purchaseOrderNumber;
+    private Integer supplierId;
     private String supplierName;
     private String supplierInternalCode;
     private LocalDateTime createdAt;
@@ -15,6 +16,7 @@ public class AdminPurchaseOrderDetailDto {
 
     public AdminPurchaseOrderDetailDto(
             String purchaseOrderNumber,
+            Integer supplierId,
             String supplierName,
             String supplierInternalCode,
             LocalDateTime createdAt,
@@ -23,6 +25,7 @@ public class AdminPurchaseOrderDetailDto {
             List<AdminPurchaseOrderItemDto> items
     ){
         this.purchaseOrderNumber = purchaseOrderNumber;
+        this.supplierId = supplierId;
         this.supplierName = supplierName;
         this.supplierInternalCode = supplierInternalCode;
         this.createdAt = createdAt;
@@ -32,6 +35,7 @@ public class AdminPurchaseOrderDetailDto {
     }
 
     public String getPurchaseOrderNumber(){ return purchaseOrderNumber; }
+    public Integer getSupplierId(){ return supplierId; }
     public String getSupplierName(){ return supplierName; }
     public String getSupplierInternalCode(){ return supplierInternalCode; }
     public LocalDateTime getCreatedAt(){ return createdAt; }

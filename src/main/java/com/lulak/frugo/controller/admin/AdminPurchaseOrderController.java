@@ -1,11 +1,14 @@
 package com.lulak.frugo.controller.admin;
 
-import com.lulak.frugo.dto.purchaseOrders.AdminPurchaseOrderDetailDto;
-import com.lulak.frugo.dto.purchaseOrders.AdminPurchaseOrderListDto;
+import com.lulak.frugo.dto.purchaseOrders.*;
+import com.lulak.frugo.model.purchaseOrders.PurchaseOrder;
 import com.lulak.frugo.service.purchaseOrders.AdminPurchaseOrderService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -43,5 +46,101 @@ public class AdminPurchaseOrderController {
             @PathVariable Integer id
     ){
         return purchaseOrderService.getPurchaseOrderDetail(id);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<PurchaseOrder> createPurchaseOrder(
+            @Valid @RequestBody PurchaseOrderCreateDto dto
+    ){
+        PurchaseOrder purchaseOrder = purchaseOrderService.createPurchaseOrder(dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(purchaseOrder);
+    }
+
+    @PutMapping("/{purchaseOrderId}/items/{itemId}")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> updatePurchaseOrderItem(
+            @PathVariable Integer purchaseOrderId,
+            @PathVariable Integer itemId,
+            @Valid @RequestBody PurchaseOrderItemUpdateDto dto
+    ){
+        purchaseOrderService.updatePurchaseOrderItem(
+                purchaseOrderId,
+                itemId,
+                dto
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{purchaseOrderId}/items")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> addPurchaseOrderItem(
+            @PathVariable Integer purchaseOrderId,
+            @Valid @RequestBody PurchaseOrderItemCreateDto dto
+    ){
+        purchaseOrderService.addPurchaseOrderItem(
+                purchaseOrderId,
+                dto
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/{purchaseOrderId}/items/{itemId}")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> deletePurchaseOrderItem(
+            @PathVariable Integer purchaseOrderId,
+            @PathVariable Integer itemId
+    ){
+        purchaseOrderService.deletePurchaseOrderItem(
+                purchaseOrderId,
+                itemId
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{purchaseOrderId}")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> deletePurchaseOrder(
+            @PathVariable Integer purchaseOrderId
+    ){
+        purchaseOrderService.deletePurchaseOrder(
+                purchaseOrderId
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{purchaseOrderId}")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> updatePurchaseOrder(
+            @PathVariable Integer purchaseOrderId,
+            @Valid @RequestBody PurchaseOrderUpdateDto dto
+    ){
+        purchaseOrderService.updatePurchaseOrder(
+                purchaseOrderId,
+                dto
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{purchaseOrderId}/status")
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    public ResponseEntity<Void> changePurchaseOrderStatus(
+            @PathVariable Integer purchaseOrderId,
+            @Valid @RequestBody PurchaseOrderStatusChangeDto dto
+    ){
+        purchaseOrderService.changePurchasedOrderStatus(
+                purchaseOrderId,
+                dto.getStatusCode(),
+                dto.getNote()
+        );
+
+        return ResponseEntity.noContent().build();
     }
 }
