@@ -1,5 +1,6 @@
 package com.lulak.frugo.service.purchaseOrders;
 
+import com.lulak.frugo.dto.event.PurchaseOrderStatusHistoryListDto;
 import com.lulak.frugo.model.Status;
 import com.lulak.frugo.model.employee.Employee;
 import com.lulak.frugo.model.purchaseOrders.PurchaseOrder;
@@ -7,6 +8,8 @@ import com.lulak.frugo.model.purchaseOrders.PurchaseOrderStatusHistory;
 import com.lulak.frugo.repository.purchaseOrders.PurchaseOrderStatusHistoryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PurchaseOrderStatusHistoryService {
@@ -17,6 +20,16 @@ public class PurchaseOrderStatusHistoryService {
             PurchaseOrderStatusHistoryRepository historyRepository
     ){
         this.historyRepository = historyRepository;
+    }
+
+    public List<PurchaseOrderStatusHistoryListDto> getFilteredStatusHistories(
+            String purchaseOrderNumber,
+            String employeeName
+    ){
+        return historyRepository.getFilteredStatusHistories(
+                purchaseOrderNumber,
+                employeeName
+        );
     }
 
     @Transactional
