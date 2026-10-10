@@ -27,6 +27,7 @@ public interface DepartmentRepository extends JpaRepository<Department, Integer>
     @Query("""
         SELECT new com.lulak.frugo.dto.employee.department.AdminJobPositionListDto(
             jp.id,
+            d.id,
             d.name,
             jp.code,
             jp.name,

@@ -2,10 +2,16 @@ package com.lulak.frugo.controller.admin;
 
 import com.lulak.frugo.dto.employee.AdminEmployeeDetailDto;
 import com.lulak.frugo.dto.employee.AdminEmployeeListDto;
+import com.lulak.frugo.dto.employee.CRUD.EmployeeCreateDto;
+import com.lulak.frugo.model.employee.Employee;
 import com.lulak.frugo.service.employee.AdminEmployeeService;
+import com.lulak.frugo.service.employee.CRUD.EmployeeCrudService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -14,9 +20,14 @@ import java.util.List;
 public class AdminEmployeeController {
 
     private final AdminEmployeeService adminEmployeeService;
+    private final EmployeeCrudService employeeCrudService;
 
-    public AdminEmployeeController(AdminEmployeeService adminEmployeeService) {
+    public AdminEmployeeController(
+            AdminEmployeeService adminEmployeeService,
+            EmployeeCrudService employeeCrudService
+    ) {
         this.adminEmployeeService = adminEmployeeService;
+        this.employeeCrudService = employeeCrudService;
     }
 
     @GetMapping
@@ -45,5 +56,26 @@ public class AdminEmployeeController {
             @PathVariable Integer id
     ){
         return adminEmployeeService.getEmployeeDetail(id);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    public ResponseEntity<Employee> createEmployee(
+            @Valid @RequestBody EmployeeCreateDto dto
+    ){
+        Employee employee = employeeCrudService.createEmployee(dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(employee);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    public ResponseEntity<Employee> updateEmployee(
+            @PathVariable Integer id,
+            @Valid @RequestBody EmployeeCreateDto dto
+    ){
+        Employee employee = employeeCrudService.updateEmployee(id, dto);
+
+        return ResponseEntity.ok(employee);
     }
 }
