@@ -42,4 +42,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             @Param("statusCode") String statusCode
 
     );
+
+    boolean existsByCustomerId(Integer customerId);
 }
