@@ -7,17 +7,17 @@ import com.lulak.frugo.model.employee.JobPosition;
 import com.lulak.frugo.model.employee.Shift;
 import com.lulak.frugo.repository.employee.EmployeeLoginRepository;
 import com.lulak.frugo.repository.employee.EmployeeRepository;
-import com.lulak.frugo.repository.employee.department.DepartmentRepository;
 import com.lulak.frugo.repository.employee.department.JobPositionRepository;
 import com.lulak.frugo.repository.referenceData.ShiftRepository;
 import com.lulak.frugo.security.PasswordService;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -139,5 +139,72 @@ public class EmployeeCrudService {
         employeeLoginRepository.save(employeeLogin);
 
         return employeeLogin;
+    }
+
+    @Transactional
+    public void deleteLogin(
+            Integer employeeId
+    ){
+        EmployeeLogin employeeLogin = employeeLoginRepository.findEmployeeLoginByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee login not found."));
+
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+        EmployeeLogin loginOfActiveUser = employeeLoginRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Login not found"));
+
+        if (Objects.equals(
+                employeeLogin.getEmployeeId(),
+                loginOfActiveUser.getEmployeeId()
+        )) {
+            throw new RuntimeException("Cannot delete own account");
+        }
+
+        employeeLoginRepository.delete(employeeLogin);
+    }
+
+    @Transactional
+    public Employee setEmployeeActive(
+            Integer employeeId,
+            boolean active
+    ){
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found " + employeeId));
+
+        String username = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        EmployeeLogin loginOfActiveUser = employeeLoginRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Login not found"));
+
+        if (employeeLoginRepository
+                .findEmployeeLoginByEmployeeId(employeeId)
+                .map(login -> Objects.equals(
+                        login.getEmployeeId(),
+                        loginOfActiveUser.getEmployeeId()
+                ))
+                .orElse(false)) {
+            throw new RuntimeException("Cannot edit status of own account");
+        }
+
+        employee.setActive(active);
+
+        if(!active){
+            employeeLoginRepository
+                    .findEmployeeLoginByEmployeeId(employeeId)
+                    .ifPresent(employeeLoginRepository::delete);
+
+            employee.setTerminationDate(LocalDate.now());
+        }else{
+            employee.setTerminationDate(null);
+        }
+
+        return employeeRepository.save(employee);
+
     }
 }

@@ -89,4 +89,25 @@ public class AdminEmployeeController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeLogin);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    public ResponseEntity<Void> deleteEmployeeLogin(
+            @PathVariable Integer id
+    ){
+        employeeCrudService.deleteLogin(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/active")
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    public ResponseEntity<Employee> setEmployeeActive(
+            @PathVariable Integer id,
+            @RequestParam boolean active
+    ){
+        Employee employee = employeeCrudService.setEmployeeActive(id, active);
+
+        return ResponseEntity.ok(employee);
+    }
 }
