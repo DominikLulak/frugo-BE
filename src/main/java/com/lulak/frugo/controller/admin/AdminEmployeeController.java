@@ -4,6 +4,7 @@ import com.lulak.frugo.dto.employee.AdminEmployeeDetailDto;
 import com.lulak.frugo.dto.employee.AdminEmployeeListDto;
 import com.lulak.frugo.dto.employee.CRUD.EmployeeCreateDto;
 import com.lulak.frugo.model.employee.Employee;
+import com.lulak.frugo.model.employee.EmployeeLogin;
 import com.lulak.frugo.service.employee.AdminEmployeeService;
 import com.lulak.frugo.service.employee.CRUD.EmployeeCrudService;
 import org.springframework.http.HttpStatus;
@@ -77,5 +78,15 @@ public class AdminEmployeeController {
         Employee employee = employeeCrudService.updateEmployee(id, dto);
 
         return ResponseEntity.ok(employee);
+    }
+
+    @PostMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    public ResponseEntity<EmployeeLogin> createEmployeeLogin(
+            @PathVariable Integer id
+    ){
+        EmployeeLogin employeeLogin = employeeCrudService.createLogin(id);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(employeeLogin);
     }
 }

@@ -2,17 +2,22 @@ package com.lulak.frugo.service.employee.CRUD;
 
 import com.lulak.frugo.dto.employee.CRUD.EmployeeCreateDto;
 import com.lulak.frugo.model.employee.Employee;
+import com.lulak.frugo.model.employee.EmployeeLogin;
 import com.lulak.frugo.model.employee.JobPosition;
 import com.lulak.frugo.model.employee.Shift;
+import com.lulak.frugo.repository.employee.EmployeeLoginRepository;
 import com.lulak.frugo.repository.employee.EmployeeRepository;
 import com.lulak.frugo.repository.employee.department.DepartmentRepository;
 import com.lulak.frugo.repository.employee.department.JobPositionRepository;
 import com.lulak.frugo.repository.referenceData.ShiftRepository;
+import com.lulak.frugo.security.PasswordService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 @Service
@@ -21,15 +26,27 @@ public class EmployeeCrudService {
     private final ShiftRepository shiftRepository;
     private final JobPositionRepository jobPositionRepository;
     private final EmployeeRepository employeeRepository;
+    private final EmployeeLoginRepository employeeLoginRepository;
+    private final PasswordService passwordService;
+
+    private String removeDiacritics(String value){
+        return Normalizer
+                .normalize(value, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+    }
 
     public EmployeeCrudService(
             ShiftRepository shiftRepository,
             JobPositionRepository jobPositionRepository,
-            EmployeeRepository employeeRepository
+            EmployeeRepository employeeRepository,
+            EmployeeLoginRepository employeeLoginRepository,
+            PasswordService passwordService
     ){
         this.shiftRepository = shiftRepository;
         this.jobPositionRepository = jobPositionRepository;
         this.employeeRepository = employeeRepository;
+        this.employeeLoginRepository = employeeLoginRepository;
+        this.passwordService = passwordService;
     }
 
     @Transactional
@@ -101,5 +118,26 @@ public class EmployeeCrudService {
         employee.setEmail(dto.getEmail());
 
         return employeeRepository.save(employee);
+    }
+
+    @Transactional
+    public EmployeeLogin createLogin(
+            Integer employeeId
+    ){
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found " + employeeId));
+
+        EmployeeLogin employeeLogin = new EmployeeLogin();
+
+        String username = removeDiacritics(employee.getLastName().toUpperCase(Locale.ROOT) + "_" + employee.getFirstName().toUpperCase(Locale.ROOT));
+        String hashedPassword = passwordService.hashPassword("_FRUGO" + employee.getEmployeeNumber() + "_");
+
+        employeeLogin.setEmployee(employee);
+        employeeLogin.setUsername(username);
+        employeeLogin.setPasswordHash(hashedPassword);
+
+        employeeLoginRepository.save(employeeLogin);
+
+        return employeeLogin;
     }
 }
