@@ -62,4 +62,13 @@ public interface DepartmentRepository extends JpaRepository<Department, Integer>
     List<AdminEmployeeListDto> getJobPositionEmployees(
             @Param("jobPositionId") Integer jobPositionId
     );
+
+
+    boolean existsByName(String name);
+
+    boolean existsByCode(String code);
+
+    boolean existsByNameAndIdNot(String name, Integer departmentId);
+
+    boolean existsByCodeAndIdNot(String code, Integer departmentId);
 }
