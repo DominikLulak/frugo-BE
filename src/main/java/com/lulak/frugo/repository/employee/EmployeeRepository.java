@@ -61,6 +61,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>  {
             :isActive IS NULL\s
             OR e.active = :isActive
         )
+        ORDER BY e.id
    \s""")
     List<AdminEmployeeListDto> getFilteredEmployees(
             @Param("employeeNumber") String employeeNumber,
