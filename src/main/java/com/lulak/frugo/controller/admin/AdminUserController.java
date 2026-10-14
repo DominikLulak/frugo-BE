@@ -3,6 +3,8 @@ package com.lulak.frugo.controller.admin;
 import com.lulak.frugo.dto.rbac.user.AdminUserDetailDto;
 import com.lulak.frugo.dto.rbac.user.AdminUserListDto;
 import com.lulak.frugo.service.rbac.user.AdminUserService;
+import com.lulak.frugo.service.rbac.user.CRUD.UserRoleService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,11 +15,13 @@ import java.util.List;
 public class AdminUserController {
 
     private final AdminUserService adminUserService;
+    private final UserRoleService userRoleService;
 
     public AdminUserController(
-            AdminUserService adminUserService
-    ){
+            AdminUserService adminUserService,
+            UserRoleService userRoleService){
         this.adminUserService = adminUserService;
+        this.userRoleService = userRoleService;
     }
 
     @GetMapping
@@ -30,5 +34,33 @@ public class AdminUserController {
             @PathVariable Integer id
     ){
         return adminUserService.getUserDetail(id);
+    }
+
+    @PostMapping("/{userId}/roles/{roleId}")
+    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    public ResponseEntity<Void> addRoleToUser(
+            @PathVariable Integer userId,
+            @PathVariable Integer roleId
+    ){
+        userRoleService.addRoleToUser(
+                userId,
+                roleId
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{userId}/roles/{roleId}")
+    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    public ResponseEntity<Void> removeRoleFromUser(
+            @PathVariable Integer userId,
+            @PathVariable Integer roleId
+    ){
+        userRoleService.removeRoleFromUser(
+                userId,
+                roleId
+        );
+
+        return ResponseEntity.noContent().build();
     }
 }
