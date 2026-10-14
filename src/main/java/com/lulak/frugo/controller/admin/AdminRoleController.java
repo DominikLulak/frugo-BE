@@ -5,6 +5,7 @@ import com.lulak.frugo.dto.rbac.role.AdminRoleDetailDto;
 import com.lulak.frugo.dto.rbac.role.AdminRoleListDto;
 import com.lulak.frugo.model.auth.Role;
 import com.lulak.frugo.service.rbac.CRUD.RoleCrudService;
+import com.lulak.frugo.service.rbac.CRUD.RolePermissionService;
 import com.lulak.frugo.service.rbac.role.AdminRoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,15 @@ public class AdminRoleController {
 
     private final AdminRoleService adminRoleService;
     private final RoleCrudService roleCrudService;
+    private final RolePermissionService rolePermissionService;
 
     public AdminRoleController(
             AdminRoleService adminRoleService,
-            RoleCrudService roleCrudService
-    ){
+            RoleCrudService roleCrudService,
+            RolePermissionService rolePermissionService){
         this.adminRoleService = adminRoleService;
         this.roleCrudService = roleCrudService;
+        this.rolePermissionService = rolePermissionService;
     }
 
     @GetMapping
@@ -60,5 +63,33 @@ public class AdminRoleController {
         Role role = roleCrudService.updateRole(id, dto);
 
         return ResponseEntity.ok(role);
+    }
+
+    @PostMapping("/{roleId}/permissions/{permissionId}")
+    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    public ResponseEntity<Void> addPermissionToRole(
+            @PathVariable Integer roleId,
+            @PathVariable Integer permissionId
+    ){
+        rolePermissionService.addPermissionRoRole(
+                roleId,
+                permissionId
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("{roleId}/permissions/{permissionId}")
+    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    public ResponseEntity<Void> removePermissionFromRole(
+            @PathVariable Integer roleId,
+            @PathVariable Integer permissionId
+    ){
+        rolePermissionService.removePermissionFromRole(
+                roleId,
+                permissionId
+        );
+
+        return ResponseEntity.noContent().build();
     }
 }
