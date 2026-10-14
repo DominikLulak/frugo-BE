@@ -1,4 +1,4 @@
-package com.lulak.frugo.service.rbac.CRUD;
+package com.lulak.frugo.service.rbac.role.CRUD;
 
 import com.lulak.frugo.dto.rbac.CRUD.RoleCreateDto;
 import com.lulak.frugo.model.auth.Role;
