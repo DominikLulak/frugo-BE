@@ -65,7 +65,7 @@ public class AdminModuleController {
     }
 
     @PostMapping("/{moduleId}/permissions")
-    @PreAuthorize("hasAuthority('WARHOUSE_READ')")
+    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
     public ResponseEntity<Permission> createPermission(
             @PathVariable Integer moduleId,
             @Valid @RequestBody PermissionCreateDto dto

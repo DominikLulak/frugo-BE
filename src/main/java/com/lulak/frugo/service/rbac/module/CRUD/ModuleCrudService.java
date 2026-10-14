@@ -7,7 +7,9 @@ import com.lulak.frugo.repository.rbac.ModuleRepository;
 import com.lulak.frugo.model.auth.Module;
 import com.lulak.frugo.repository.rbac.PermissionRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ModuleCrudService {
 
     private final ModuleRepository moduleRepository;
