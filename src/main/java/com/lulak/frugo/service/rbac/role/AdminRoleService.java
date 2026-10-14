@@ -38,6 +38,7 @@ public class AdminRoleService {
         return new AdminRoleDetailDto(
                 role.getId(),
                 role.getCode(),
+                role.getName(),
                 rolePermissions,
                 roleUsers
         );
