@@ -39,4 +39,12 @@ public interface ModuleRepository extends JpaRepository<Module, Integer> {
     List<AdminRolePermissionListDto> getModulePermissions(
             @Param("moduleId") Integer moduleId
     );
+
+    boolean existsByCode(String code);
+
+    boolean existsByName(String name);
+
+    boolean existsByCodeAndIdNot(String code, Integer moduleId);
+
+    boolean existsByNameAndIdNot(String name, Integer moduleId);
 }
