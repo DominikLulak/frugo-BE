@@ -21,13 +21,13 @@ public class AdminEventLogController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('EVENTS_READ')")
     public List<AdminEventLogListDto> getEventLogs(){
         return eventLogService.getAllEventLogs();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('EVENTS_READ')")
     public AdminEventLogDetailDto getEventLogDetails(
             @PathVariable Integer id
     ){

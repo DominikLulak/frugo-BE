@@ -20,7 +20,7 @@ public class AdminOrderController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ORDER_READ')")
+    @PreAuthorize("hasAuthority('ORDERS_READ')")
     public List<AdminOrderListDto> getOrders(
             @RequestParam(required = false) String orderNumber,
             @RequestParam(required = false) String customerName,
@@ -35,7 +35,7 @@ public class AdminOrderController {
     }
 
     @GetMapping("/{id}/items")
-    @PreAuthorize("hasAuthority('ORDER_READ')")
+    @PreAuthorize("hasAuthority('ORDERS_READ')")
     public List<AdminOrderItemDetailDto> getOrderItems(
             @PathVariable Integer id
     ){

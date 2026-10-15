@@ -22,7 +22,7 @@ public class AdminStockMovementController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('EVENTS_READ')")
     public List<AdminStockMovementListDto> getStockMovements(
             @RequestParam(required = false) String eventCode,
             @RequestParam(required = false) String etiNumber,
@@ -40,7 +40,7 @@ public class AdminStockMovementController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('EVENTS_READ')")
     public AdminStockMovementDetailDto getStockMovementDetail(
             @PathVariable Integer id
     ){

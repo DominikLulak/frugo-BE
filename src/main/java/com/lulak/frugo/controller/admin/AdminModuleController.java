@@ -32,11 +32,11 @@ public class AdminModuleController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('MODULES_READ')")
     public List<AdminModuleListDto> getModules(){ return adminModuleService.getAllModules(); }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('MODULES_READ')")
     public AdminModuleDetailDto getModuleDetail(
             @PathVariable Integer id
     ){
@@ -44,7 +44,7 @@ public class AdminModuleController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('MODULES_CREATE')")
     public ResponseEntity<Module> createModule(
             @Valid @RequestBody ModuleCreateDto dto
     ){
@@ -54,7 +54,7 @@ public class AdminModuleController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('MODULES_EDIT')")
     public ResponseEntity<Module> updateModule(
             @PathVariable Integer id,
             @Valid @RequestBody ModuleCreateDto dto
@@ -65,7 +65,7 @@ public class AdminModuleController {
     }
 
     @PostMapping("/{moduleId}/permissions")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('MODULES_MANAGE')")
     public ResponseEntity<Permission> createPermission(
             @PathVariable Integer moduleId,
             @Valid @RequestBody PermissionCreateDto dto
@@ -76,7 +76,7 @@ public class AdminModuleController {
     }
 
     @PutMapping("/permissions/{permissionId}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('MODULES_MANAGE')")
     public ResponseEntity<Permission> updatePermission(
             @PathVariable Integer permissionId,
             @Valid @RequestBody PermissionCreateDto dto

@@ -32,7 +32,7 @@ public class AdminCustomerController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
+    @PreAuthorize("hasAuthority('CUSTOMERS_READ')")
     public List<AdminCustomerListDto> getCustomers(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String companyId,
@@ -52,7 +52,7 @@ public class AdminCustomerController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
+    @PreAuthorize("hasAuthority('CUSTOMERS_READ')")
     public AdminCustomerDetailDto getCustomerDetail(
             @PathVariable Integer id
     ){
@@ -60,7 +60,7 @@ public class AdminCustomerController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
+    @PreAuthorize("hasAuthority('CUSTOMERS_CREATE')")
     public ResponseEntity<Customer> createCustomer(
             @Valid @RequestBody CustomerCreateDto dto
     ){
@@ -70,7 +70,7 @@ public class AdminCustomerController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
+    @PreAuthorize("hasAuthority('CUSTOMERS_EDIT')")
     public ResponseEntity<Customer> updateCustomer(
             @PathVariable Integer id,
             @Valid @RequestBody CustomerCreateDto dto
@@ -81,7 +81,7 @@ public class AdminCustomerController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
+    @PreAuthorize("hasAuthority('CUSTOMERS_DELETE')")
     public ResponseEntity<Void> deleteCustomer(
             @PathVariable Integer id
     ){
@@ -91,7 +91,7 @@ public class AdminCustomerController {
     }
 
     @PostMapping("/{customerId}/customerContacts")
-    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
+    @PreAuthorize("hasAuthority('CUSTOMERS_MANAGE')")
     public ResponseEntity<Void> addCustomerContact(
             @PathVariable Integer customerId,
             @Valid @RequestBody CustomerContactCrudDto dto
@@ -104,7 +104,7 @@ public class AdminCustomerController {
     }
 
     @PutMapping("/{customerId}/customerContacts/{customerContactId}")
-    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
+    @PreAuthorize("hasAuthority('CUSTOMERS_MANAGE')")
     public ResponseEntity<Void> updateCustomerContact(
             @PathVariable Integer customerId,
             @PathVariable Integer customerContactId,
@@ -120,7 +120,7 @@ public class AdminCustomerController {
     }
 
     @DeleteMapping("/{customerId}/customerContacts/{customerContactId}")
-    @PreAuthorize("hasAuthority('CUSTOMER_READ')")
+    @PreAuthorize("hasAuthority('CUSTOMERS_MANAGE')")
     public ResponseEntity<Void> deleteCustomerContact(
             @PathVariable Integer customerId,
             @PathVariable Integer customerContactId

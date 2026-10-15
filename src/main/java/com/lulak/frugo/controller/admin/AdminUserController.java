@@ -25,11 +25,11 @@ public class AdminUserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('USERS_READ')")
     public List<AdminUserListDto> getUsers(){ return adminUserService.getAllUsers(); }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('USERS_READ')")
     public AdminUserDetailDto getUserDetail(
             @PathVariable Integer id
     ){
@@ -37,7 +37,7 @@ public class AdminUserController {
     }
 
     @PostMapping("/{userId}/roles/{roleId}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('USERS_MANAGE')")
     public ResponseEntity<Void> addRoleToUser(
             @PathVariable Integer userId,
             @PathVariable Integer roleId
@@ -51,7 +51,7 @@ public class AdminUserController {
     }
 
     @DeleteMapping("/{userId}/roles/{roleId}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('USERS_MANAGE')")
     public ResponseEntity<Void> removeRoleFromUser(
             @PathVariable Integer userId,
             @PathVariable Integer roleId

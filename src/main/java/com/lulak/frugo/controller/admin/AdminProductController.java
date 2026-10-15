@@ -21,7 +21,7 @@ public class AdminProductController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PRODUCTS_READ')")
     public List<AdminProductListDto> getProducts(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String productType,
@@ -35,7 +35,7 @@ public class AdminProductController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PRODUCTS_READ')")
     public AdminProductDetailDto getProductDetail(
             @PathVariable Integer id
     ){

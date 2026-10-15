@@ -25,7 +25,7 @@ public class AdminSupplierController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('SUPPLIERS_READ')")
     public List<AdminSupplierListDto> getSuppliers(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String internalCode,
@@ -39,7 +39,7 @@ public class AdminSupplierController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('SUPPLIERS_CREATE')")
     public ResponseEntity<Supplier> createSupplier(
             @Valid @RequestBody SupplierCreateDto dto
     ){
@@ -51,7 +51,7 @@ public class AdminSupplierController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('SUPPLIERS_EDIT')")
     public ResponseEntity<Supplier> updateSupplier(
             @PathVariable Integer id,
             @Valid @RequestBody SupplierUpdateDto dto
@@ -62,7 +62,7 @@ public class AdminSupplierController {
     }
 
     @PatchMapping("/{id}/active")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('SUPPLIERS_MANAGE')")
     public ResponseEntity<Supplier> setSupplierActive(
             @PathVariable Integer id,
             @RequestParam boolean active
@@ -73,7 +73,7 @@ public class AdminSupplierController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('SUPPLIERS_DELETE')")
     public ResponseEntity<Void> deleteSupplier(
             @PathVariable Integer id
     ){

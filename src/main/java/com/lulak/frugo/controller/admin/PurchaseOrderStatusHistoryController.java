@@ -21,7 +21,7 @@ public class PurchaseOrderStatusHistoryController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('EVENTS_READ')")
     public List<PurchaseOrderStatusHistoryListDto> getStatusHistories(
             @RequestParam(required = false) String purchaseOrderNumber,
             @RequestParam(required = false) String employeeName

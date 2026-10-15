@@ -22,7 +22,7 @@ public class AdminPalletController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('STOCKS_READ')")
     public List<AdminPalletListDto> getFilteredPallets(
             @RequestParam(required = false) String etiNumber,
             @RequestParam(required = false) String locationCode,
@@ -36,7 +36,7 @@ public class AdminPalletController {
     }
 
     @GetMapping("/{id}/items")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('STOCKS_READ')")
     public List<AdminPalletWarehouseItemDto> getPalletItems(
             @PathVariable Integer id
     ){

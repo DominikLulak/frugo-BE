@@ -20,6 +20,6 @@ public class AdminCountryController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('REFERENCE_DATA_READ')")
     public List<AdminCountryDto> getCountries(){ return adminCountryService.getAllCountries(); }
 }

@@ -33,11 +33,11 @@ public class AdminDepartmentController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('DEPARTMENTS_READ')")
     public List<AdminDepartmentListDto> getDepartments(){ return adminDepartmentService.getAllDepartments(); }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('DEPARTMENTS_READ')")
     public AdminDepartmentDetailDto getDepartmentDetail(
             @PathVariable Integer id
     ){
@@ -45,7 +45,7 @@ public class AdminDepartmentController {
     }
 
     @GetMapping("/jobPosition/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('DEPARTMENTS_READ')")
     public AdminJobPositionDetailDto getJobPosition(
             @PathVariable Integer id
     ){
@@ -53,7 +53,7 @@ public class AdminDepartmentController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('DEPARTMENTS_CREATE')")
     public ResponseEntity<Department> createDepartment(
             @Valid @RequestBody DepartmentCrudDto dto
     ){
@@ -63,7 +63,7 @@ public class AdminDepartmentController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('DEPARTMENTS_EDIT')")
     public ResponseEntity<Department> updateDepartment(
             @PathVariable Integer id,
             @Valid @RequestBody DepartmentCrudDto dto
@@ -74,7 +74,7 @@ public class AdminDepartmentController {
     }
 
     @PostMapping("/{departmentId}/jobPosition")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('DEPARTMENTS_EDIT')")
     public ResponseEntity<JobPosition> createJobPosition(
             @PathVariable Integer departmentId,
             @Valid @RequestBody JobPositionCrudDto dto
@@ -85,7 +85,7 @@ public class AdminDepartmentController {
     }
 
     @PutMapping("/{departmentId}/jobPosition/{jobPositionId}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('DEPARTMENTS_EDIT')")
     public ResponseEntity<JobPosition> updateJobPosition(
             @PathVariable Integer departmentId,
             @PathVariable Integer jobPositionId,

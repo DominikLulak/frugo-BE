@@ -20,6 +20,6 @@ public class AdminPackagingController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('REFERENCE_DATA_READ')")
     public List<AdminPackagingDto> getPackaging(){ return adminPackagingService.getAllPackaging(); }
 }

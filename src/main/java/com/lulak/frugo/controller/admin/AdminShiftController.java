@@ -20,6 +20,6 @@ public class AdminShiftController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('REFERENCE_DATA_READ')")
     public List<AdminShiftDto> getShifts(){ return adminShiftService.getAllShifts(); }
 }

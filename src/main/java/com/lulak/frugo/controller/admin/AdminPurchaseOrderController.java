@@ -25,7 +25,7 @@ public class AdminPurchaseOrderController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_READ')")
     public List<AdminPurchaseOrderListDto> getPurchaseOrders(
             @RequestParam(required = false) String purchaseOrderNumber,
             @RequestParam(required = false) String supplierName,
@@ -41,7 +41,7 @@ public class AdminPurchaseOrderController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_READ')")
     public AdminPurchaseOrderDetailDto getPurchaseOrderDetail(
             @PathVariable Integer id
     ){
@@ -49,7 +49,7 @@ public class AdminPurchaseOrderController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_CREATE')")
     public ResponseEntity<PurchaseOrder> createPurchaseOrder(
             @Valid @RequestBody PurchaseOrderCreateDto dto
     ){
@@ -61,7 +61,7 @@ public class AdminPurchaseOrderController {
     }
 
     @PutMapping("/{purchaseOrderId}/items/{itemId}")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_MANAGE')")
     public ResponseEntity<Void> updatePurchaseOrderItem(
             @PathVariable Integer purchaseOrderId,
             @PathVariable Integer itemId,
@@ -77,7 +77,7 @@ public class AdminPurchaseOrderController {
     }
 
     @PostMapping("/{purchaseOrderId}/items")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_MANAGE')")
     public ResponseEntity<Void> addPurchaseOrderItem(
             @PathVariable Integer purchaseOrderId,
             @Valid @RequestBody PurchaseOrderItemCreateDto dto
@@ -90,7 +90,7 @@ public class AdminPurchaseOrderController {
     }
 
     @DeleteMapping("/{purchaseOrderId}/items/{itemId}")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_MANAGE')")
     public ResponseEntity<Void> deletePurchaseOrderItem(
             @PathVariable Integer purchaseOrderId,
             @PathVariable Integer itemId
@@ -104,7 +104,7 @@ public class AdminPurchaseOrderController {
     }
 
     @DeleteMapping("/{purchaseOrderId}")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_DELETE')")
     public ResponseEntity<Void> deletePurchaseOrder(
             @PathVariable Integer purchaseOrderId
     ){
@@ -116,7 +116,7 @@ public class AdminPurchaseOrderController {
     }
 
     @PutMapping("/{purchaseOrderId}")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_EDIT')")
     public ResponseEntity<Void> updatePurchaseOrder(
             @PathVariable Integer purchaseOrderId,
             @Valid @RequestBody PurchaseOrderUpdateDto dto
@@ -130,7 +130,7 @@ public class AdminPurchaseOrderController {
     }
 
     @PatchMapping("/{purchaseOrderId}/status")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_MANAGE')")
     public ResponseEntity<Void> changePurchaseOrderStatus(
             @PathVariable Integer purchaseOrderId,
             @Valid @RequestBody PurchaseOrderStatusChangeDto dto

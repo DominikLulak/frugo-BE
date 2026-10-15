@@ -32,7 +32,7 @@ public class AdminEmployeeController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('EMPLOYEES_READ')")
     public List<AdminEmployeeListDto> getEmployees(
             @RequestParam(required = false) String employeeNumber,
             @RequestParam(required = false) String name,
@@ -52,7 +52,7 @@ public class AdminEmployeeController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('EMPLOYEES_READ')")
     public AdminEmployeeDetailDto getEmployeeDetail(
             @PathVariable Integer id
     ){
@@ -60,7 +60,7 @@ public class AdminEmployeeController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('EMPLOYEES_CREATE')")
     public ResponseEntity<Employee> createEmployee(
             @Valid @RequestBody EmployeeCreateDto dto
     ){
@@ -70,7 +70,7 @@ public class AdminEmployeeController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('EMPLOYEES_EDIT')")
     public ResponseEntity<Employee> updateEmployee(
             @PathVariable Integer id,
             @Valid @RequestBody EmployeeCreateDto dto
@@ -81,7 +81,7 @@ public class AdminEmployeeController {
     }
 
     @PostMapping("/{id}")
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('EMPLOYEES_MANAGE')")
     public ResponseEntity<EmployeeLogin> createEmployeeLogin(
             @PathVariable Integer id
     ){
@@ -91,7 +91,7 @@ public class AdminEmployeeController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('EMPLOYEES_MANAGE')")
     public ResponseEntity<Void> deleteEmployeeLogin(
             @PathVariable Integer id
     ){
@@ -101,7 +101,7 @@ public class AdminEmployeeController {
     }
 
     @PatchMapping("/{id}/active")
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('EMPLOYEES_MANAGE')")
     public ResponseEntity<Employee> setEmployeeActive(
             @PathVariable Integer id,
             @RequestParam boolean active

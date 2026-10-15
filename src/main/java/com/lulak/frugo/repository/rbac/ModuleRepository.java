@@ -34,7 +34,7 @@ public interface ModuleRepository extends JpaRepository<Module, Integer> {
         FROM Permission p
         JOIN p.module m
         WHERE p.module.id = :moduleId
-        ORDER BY m.id
+        ORDER BY m.id, p.id
     """)
     List<AdminRolePermissionListDto> getModulePermissions(
             @Param("moduleId") Integer moduleId

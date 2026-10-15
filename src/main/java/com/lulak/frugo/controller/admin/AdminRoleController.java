@@ -33,11 +33,11 @@ public class AdminRoleController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('ROLES_READ')")
     public List<AdminRoleListDto> getAllRoles(){ return adminRoleService.getAllRoles(); }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('ROLES_READ')")
     public AdminRoleDetailDto getRoleDetail(
             @PathVariable Integer id
     ){
@@ -45,7 +45,7 @@ public class AdminRoleController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('ROLES_CREATE')")
     public ResponseEntity<Role> createRole(
             @Valid @RequestBody RoleCreateDto dto
     ){
@@ -55,7 +55,7 @@ public class AdminRoleController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('ROLES_EDIT')")
     public ResponseEntity<Role> updateRole(
             @PathVariable Integer id,
             @Valid @RequestBody RoleCreateDto dto
@@ -66,7 +66,7 @@ public class AdminRoleController {
     }
 
     @PostMapping("/{roleId}/permissions/{permissionId}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('ROLES_MANAGE')")
     public ResponseEntity<Void> addPermissionToRole(
             @PathVariable Integer roleId,
             @PathVariable Integer permissionId
@@ -80,7 +80,7 @@ public class AdminRoleController {
     }
 
     @DeleteMapping("{roleId}/permissions/{permissionId}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('ROLES_MANAGE')")
     public ResponseEntity<Void> removePermissionFromRole(
             @PathVariable Integer roleId,
             @PathVariable Integer permissionId
