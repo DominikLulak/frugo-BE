@@ -1,5 +1,6 @@
 package com.lulak.frugo.controller.admin;
 
+import com.lulak.frugo.dto.pallet.AdminPalletDetailDto;
 import com.lulak.frugo.dto.pallet.AdminPalletListDto;
 import com.lulak.frugo.dto.pallet.AdminPalletWarehouseItemDto;
 import com.lulak.frugo.service.pallet.AdminPalletService;
@@ -37,9 +38,9 @@ public class AdminPalletController {
 
     @GetMapping("/{id}/items")
     @PreAuthorize("hasAuthority('STOCKS_READ')")
-    public List<AdminPalletWarehouseItemDto> getPalletItems(
+    public AdminPalletDetailDto getPalletDetail(
             @PathVariable Integer id
     ){
-        return adminPalletService.getPalletItems(id);
+        return adminPalletService.getPalletDetail(id);
     }
 }

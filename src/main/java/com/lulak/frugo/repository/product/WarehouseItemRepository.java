@@ -62,6 +62,7 @@ public interface WarehouseItemRepository extends JpaRepository<WarehouseItem, In
             COALESCE(:warehouseCode, '') = ''
             OR wh.code LIKE CONCAT('%', :warehouseCode, '%') 
         )
+        ORDER BY w.id
     """)
     List<AdminWarehouseItemListDto> getFilteredWarehouseItems(
             @Param("productCode") String productCode,
