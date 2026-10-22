@@ -40,6 +40,23 @@ public class AdminPurchaseOrderService {
 
     private final PurchaseOrderStatusHistoryService statusHistoryService;
 
+    private PurchaseOrder getEditablePurchaseOrder(Integer purchaseOrderId){
+        PurchaseOrder purchaseOrder = purchaseOrderRepository
+                .findPurchaseOrderById(purchaseOrderId);
+
+        if(purchaseOrder == null){
+            throw new RuntimeException("Purchase order not found " + purchaseOrderId);
+        }
+
+        String statusCode = purchaseOrder.getStatus().getCode();
+
+        if(!"ENTERED".equals(statusCode) &&
+            !"BLOCKED".equals(statusCode)){
+            throw new RuntimeException("Purchase order cannot be modified in status " + statusCode);
+        }
+        return purchaseOrder;
+    }
+
     private PurchaseOrderItem createPurchaseOrderItem(
             PurchaseOrder purchaseOrder,
             Product product,
@@ -106,6 +123,7 @@ public class AdminPurchaseOrderService {
                 purchaseOrderItemRepository.getPurchaseOrderItems(id);
 
         return new AdminPurchaseOrderDetailDto(
+                purchaseOrder.getId(),
                 purchaseOrder.getPurchaseOrderNumber(),
                 purchaseOrder.getSupplier().getId(),
                 purchaseOrder.getSupplier().getName(),
@@ -225,18 +243,7 @@ public class AdminPurchaseOrderService {
             Integer itemId,
             PurchaseOrderItemUpdateDto dto
     ){
-        PurchaseOrder purchaseOrder = purchaseOrderRepository
-                .findPurchaseOrderById(purchaseOrderId);
-
-        if(purchaseOrder == null){
-            throw new RuntimeException("Purchase order not found! " + purchaseOrderId);
-        }
-
-        String statusCode = purchaseOrder.getStatus().getCode();
-
-        if("COMPLETED".equals(statusCode) || "CANCELED".equals(statusCode)){
-            throw new RuntimeException("Purchase order cannot be modified in status " + statusCode);
-        }
+        PurchaseOrder purchaseOrder = getEditablePurchaseOrder(purchaseOrderId);
 
         PurchaseOrderItem item = purchaseOrderItemRepository
                 .findByIdAndPurchaseOrderId(itemId, purchaseOrderId)
@@ -261,18 +268,7 @@ public class AdminPurchaseOrderService {
             Integer purchaseOrderId,
             PurchaseOrderItemCreateDto dto
     ){
-        PurchaseOrder purchaseOrder = purchaseOrderRepository
-                .findPurchaseOrderById(purchaseOrderId);
-
-        if(purchaseOrder == null){
-            throw new RuntimeException("Purchase order not found: " + purchaseOrderId);
-        }
-
-        String statusCode = purchaseOrder.getStatus().getCode();
-
-        if("COMPLETED".equals(statusCode) || "CANCELED".equals(statusCode)){
-            throw new RuntimeException("Purchase order cannot be modified in status " + statusCode);
-        }
+        PurchaseOrder purchaseOrder = getEditablePurchaseOrder(purchaseOrderId);
 
         Product product = productRepository
                 .findById(dto.getProductId())
@@ -302,18 +298,7 @@ public class AdminPurchaseOrderService {
             Integer purchaseOrderId,
             Integer itemId
     ){
-        PurchaseOrder purchaseOrder = purchaseOrderRepository
-                .findPurchaseOrderById(purchaseOrderId);
-
-        if(purchaseOrder == null){
-            throw new RuntimeException("Purchase order not found! " + purchaseOrderId);
-        }
-
-        String statusCode = purchaseOrder.getStatus().getCode();
-
-        if("COMPLETED".equals(statusCode) || "CANCELED".equals(statusCode)){
-            throw new RuntimeException("Purchase order cannot be modified din status " + statusCode);
-        }
+        PurchaseOrder purchaseOrder = getEditablePurchaseOrder(purchaseOrderId);
 
         PurchaseOrderItem item = purchaseOrderItemRepository
                 .findByIdAndPurchaseOrderId(itemId, purchaseOrderId)
@@ -363,17 +348,7 @@ public class AdminPurchaseOrderService {
             PurchaseOrderUpdateDto dto
     ){
         PurchaseOrder purchaseOrder =
-                purchaseOrderRepository.findPurchaseOrderById(purchaseOrderId);
-
-        if(purchaseOrder == null){
-            throw new RuntimeException("Purchase order not found " + purchaseOrderId);
-        }
-
-        String statusCode = purchaseOrder.getStatus().getCode();
-
-        if(!"ENTERED".equals(statusCode) && !"BLOCKED".equals(statusCode)){
-            throw new RuntimeException("Purchase order cannot be modified in status " + statusCode);
-        }
+                getEditablePurchaseOrder(purchaseOrderId);
 
         boolean hasReceivedItems = purchaseOrderItemRepository
                 .existsByPurchaseOrderIdAndReceivedQuantityGreaterThan(purchaseOrderId, 0);
@@ -415,8 +390,15 @@ public class AdminPurchaseOrderService {
         String oldStatusCode = oldStatus.getCode();
 
         boolean allowed =
-                ("ENTERED".equals(oldStatusCode) && ("BLOCKED".equals(newStatusCode) || "CANCELLED".equals(newStatusCode)))
-                || ("BLOCKED".equals(oldStatusCode) && ("CANCELED".equals(newStatusCode) || "ENTERED".equals(newStatusCode)));
+                ("ENTERED".equals(oldStatusCode)
+                        && ("BLOCKED".equals(newStatusCode)
+                        || "CANCELLED".equals(newStatusCode)))
+                        || ("RELEASED".equals(oldStatusCode)
+                        && "BLOCKED".equals(newStatusCode))
+                        || ("BLOCKED".equals(oldStatusCode)
+                        && ("ENTERED".equals(newStatusCode)
+                        || "RELEASED".equals(newStatusCode)
+                        || "CANCELLED".equals(newStatusCode)));
 
         if(!allowed){
             throw new RuntimeException("Status transition not allowed: " + oldStatus + " -> " + newStatusCode);

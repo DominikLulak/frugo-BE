@@ -5,6 +5,7 @@ import java.util.List;
 
 public class AdminPurchaseOrderDetailDto {
 
+    private Integer id;
     private String purchaseOrderNumber;
     private Integer supplierId;
     private String supplierName;
@@ -15,6 +16,7 @@ public class AdminPurchaseOrderDetailDto {
     private List<AdminPurchaseOrderItemDto> items;
 
     public AdminPurchaseOrderDetailDto(
+            Integer id,
             String purchaseOrderNumber,
             Integer supplierId,
             String supplierName,
@@ -24,6 +26,7 @@ public class AdminPurchaseOrderDetailDto {
             String statusCode,
             List<AdminPurchaseOrderItemDto> items
     ){
+        this.id = id;
         this.purchaseOrderNumber = purchaseOrderNumber;
         this.supplierId = supplierId;
         this.supplierName = supplierName;
@@ -34,6 +37,7 @@ public class AdminPurchaseOrderDetailDto {
         this.items = items;
     }
 
+    public Integer getId(){ return id; }
     public String getPurchaseOrderNumber(){ return purchaseOrderNumber; }
     public Integer getSupplierId(){ return supplierId; }
     public String getSupplierName(){ return supplierName; }
