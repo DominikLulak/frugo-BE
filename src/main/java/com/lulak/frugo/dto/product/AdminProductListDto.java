@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public class AdminProductListDto {
 
     private Integer id;
+    private Integer categoryId;
     private String productCode;
     private String categoryCode;
     private String productType;
@@ -18,6 +19,7 @@ public class AdminProductListDto {
 
     public AdminProductListDto(
             Integer id,
+            Integer categoryId,
             String productCode,
             String categoryCode,
             String productType,
@@ -30,6 +32,7 @@ public class AdminProductListDto {
             Integer minimumStock
     ){
         this.id = id;
+        this.categoryId = categoryId;
         this.productCode = productCode;
         this.categoryCode = categoryCode;
         this.productType = productType;
@@ -43,6 +46,7 @@ public class AdminProductListDto {
     }
 
     public Integer getId(){ return id; }
+    public Integer getCategoryId(){ return categoryId; }
     public String getProductCode(){ return productCode; }
     public String getCategoryCode(){ return categoryCode; }
     public String getProductType(){ return productType; }

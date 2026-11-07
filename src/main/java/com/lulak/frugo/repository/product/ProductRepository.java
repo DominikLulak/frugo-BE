@@ -15,6 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("""
         SELECT new com.lulak.frugo.dto.product.AdminProductListDto(
             p.id,
+            p.productType.category.id,
             p.productCode,
             p.productType.category.code,
             p.productType.name,
@@ -53,6 +54,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             
         GROUP BY 
             p.id,
+            p.productType.category.id,
             p.productCode,
             p.productType.category.code,
             p.productType.name,
@@ -62,10 +64,15 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             p.forSale,
             p.reorderPoint,
             p.minimumStock
+        ORDER BY 
+            p.id
     """)
     List<AdminProductListDto> getFilteredProducts(
             @Param("category") String category,
             @Param("productType") String productType,
             @Param("productCode") String productCode
     );
+
+    boolean existsByProductCode(String productCode);
+    boolean existsByProductCodeAndIdNot(String productCode, Integer id);
 }
