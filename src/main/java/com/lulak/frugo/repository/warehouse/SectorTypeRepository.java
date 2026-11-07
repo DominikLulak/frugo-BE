@@ -20,4 +20,12 @@ public interface SectorTypeRepository extends JpaRepository<SectorType, Integer>
         ORDER BY st.id
     """)
     List<AdminWarehouseSectorTypeDto> getAllSectorTypes();
+
+    boolean existsByCode(String sectorTypeCode);
+
+    boolean existsByName(String sectorTypeName);
+
+    boolean existsByCodeAndIdNot(String sectorTypeCode, Integer sectorTypeId);
+
+    boolean existsByNameAndIdNot(String sectorTypeName, Integer sectorTypeId);
 }
