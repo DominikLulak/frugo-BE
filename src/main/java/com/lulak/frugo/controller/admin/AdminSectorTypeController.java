@@ -1,7 +1,7 @@
 package com.lulak.frugo.controller.admin;
 
 import com.lulak.frugo.dto.warehouse.AdminWarehouseSectorTypeDto;
-import com.lulak.frugo.dto.warehouse.CRUD.SectorTypeCreateDto;
+import com.lulak.frugo.dto.warehouse.CRUD.sectorType.SectorTypeCreateDto;
 import com.lulak.frugo.model.warehouse.SectorType;
 import com.lulak.frugo.service.warehouse.AdminSectorTypeService;
 import com.lulak.frugo.service.warehouse.CRUD.SectorTypeCrudService;

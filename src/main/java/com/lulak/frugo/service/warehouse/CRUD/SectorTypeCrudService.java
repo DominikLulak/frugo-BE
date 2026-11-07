@@ -1,6 +1,6 @@
 package com.lulak.frugo.service.warehouse.CRUD;
 
-import com.lulak.frugo.dto.warehouse.CRUD.SectorTypeCreateDto;
+import com.lulak.frugo.dto.warehouse.CRUD.sectorType.SectorTypeCreateDto;
 import com.lulak.frugo.model.warehouse.SectorType;
 import com.lulak.frugo.repository.warehouse.SectorTypeRepository;
 import jakarta.transaction.Transactional;

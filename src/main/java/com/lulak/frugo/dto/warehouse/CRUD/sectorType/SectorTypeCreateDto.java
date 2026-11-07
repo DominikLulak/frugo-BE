@@ -1,4 +1,4 @@
-package com.lulak.frugo.dto.warehouse.CRUD;
+package com.lulak.frugo.dto.warehouse.CRUD.sectorType;
 
 import javax.validation.constraints.NotNull;
 
