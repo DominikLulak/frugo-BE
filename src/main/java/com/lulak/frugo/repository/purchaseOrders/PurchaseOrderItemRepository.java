@@ -43,4 +43,6 @@ public interface PurchaseOrderItemRepository extends JpaRepository<PurchaseOrder
             Integer purchaseOrderId,
             Integer receivedQuantity
     );
+
+    List<PurchaseOrderItem> findAllByPurchaseOrderId(Integer purchaseOrderId);
 }
