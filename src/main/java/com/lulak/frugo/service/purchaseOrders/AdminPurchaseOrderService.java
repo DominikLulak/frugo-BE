@@ -8,7 +8,6 @@ import com.lulak.frugo.model.employee.EmployeeLogin;
 import com.lulak.frugo.model.product.Product;
 import com.lulak.frugo.model.purchaseOrders.PurchaseOrder;
 import com.lulak.frugo.model.purchaseOrders.PurchaseOrderItem;
-import com.lulak.frugo.model.purchaseOrders.PurchaseOrderStatusHistory;
 import com.lulak.frugo.model.purchaseOrders.Supplier;
 import com.lulak.frugo.repository.employee.EmployeeLoginRepository;
 import com.lulak.frugo.repository.product.ProductRepository;
@@ -19,7 +18,6 @@ import com.lulak.frugo.repository.referenceData.CountryRepository;
 import com.lulak.frugo.repository.referenceData.StatusRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -74,6 +72,47 @@ public class AdminPurchaseOrderService {
         item.setStatus(status);
 
         return item;
+    }
+
+    private void validateStatusTransition(
+            String currentStatus,
+            String newStatus
+    ){
+        boolean isAllowed = switch (currentStatus){
+            case "ENTERED" ->
+                newStatus.equals("BLOCKED")
+                        || newStatus.equals("CANCELLED");
+            case "RELEASED" ->
+                newStatus.equals("BLOCKED");
+            case "BLOCKED" ->
+                newStatus.equals("ENTERED")
+                        || newStatus.equals("RELEASED")
+                        || newStatus.equals("CANCELLED");
+            default -> false;
+        };
+
+        if(!isAllowed){
+            throw new IllegalStateException(
+                    "Status transition from " + currentStatus
+                    + " to " + newStatus + " is not allowed"
+            );
+        }
+    }
+
+    private void updatePurchaseOrderItemsStatus(
+            List<PurchaseOrderItem> items,
+            Status newStatus
+    ){
+        for(PurchaseOrderItem item : items){
+            String currentStatus = item.getStatus().getCode();
+
+            if("COMPLETED".equals(currentStatus)){
+                continue;
+            }
+
+            item.setStatus(newStatus);
+        }
+        purchaseOrderItemRepository.saveAll(items);
     }
 
     public AdminPurchaseOrderService(
@@ -221,18 +260,16 @@ public class AdminPurchaseOrderService {
                     itemStatus,
                     itemDto.getQuantity()
             );
-
-            //Create status history
-            statusHistoryService.recordStatusChange(
-                    purchaseOrder,
-                    null,
-                    orderStatus,
-                    employee,
-                    "Vytvoření objednávky"
-            );
-
             purchaseOrderItemRepository.save(item);
         }
+
+        statusHistoryService.recordStatusChange(
+                purchaseOrder,
+                null,
+                orderStatus,
+                employee,
+                "Vytvoření objednávky"
+        );
 
         return purchaseOrder;
     }
@@ -248,6 +285,12 @@ public class AdminPurchaseOrderService {
         PurchaseOrderItem item = purchaseOrderItemRepository
                 .findByIdAndPurchaseOrderId(itemId, purchaseOrderId)
                 .orElseThrow(() -> new RuntimeException("Purchase order item not found " + itemId));
+
+        if(dto.getQuantity() == null || dto.getQuantity() <= 0){
+            throw new IllegalStateException(
+                    "Quantity must be greater than zero"
+            );
+        }
 
         Country country = countryRepository
                 .findById(dto.getCountryId())
@@ -277,6 +320,12 @@ public class AdminPurchaseOrderService {
         Country country = countryRepository
                 .findById(dto.getCountryId())
                 .orElseThrow(() -> new RuntimeException("Country not found " + dto.getCountryId()));
+
+        if(dto.getQuantity() == null || dto.getQuantity() <= 0){
+            throw new IllegalStateException(
+                    "Quantity must be greater than zero"
+            );
+        }
 
         Status status = statusRepository
                 .findByCode("ENTERED")
@@ -387,25 +436,26 @@ public class AdminPurchaseOrderService {
         }
 
         Status oldStatus = purchaseOrder.getStatus();
-        String oldStatusCode = oldStatus.getCode();
-
-        boolean allowed =
-                ("ENTERED".equals(oldStatusCode)
-                        && ("BLOCKED".equals(newStatusCode)
-                        || "CANCELLED".equals(newStatusCode)))
-                        || ("RELEASED".equals(oldStatusCode)
-                        && "BLOCKED".equals(newStatusCode))
-                        || ("BLOCKED".equals(oldStatusCode)
-                        && ("ENTERED".equals(newStatusCode)
-                        || "RELEASED".equals(newStatusCode)
-                        || "CANCELLED".equals(newStatusCode)));
-
-        if(!allowed){
-            throw new RuntimeException("Status transition not allowed: " + oldStatus + " -> " + newStatusCode);
-        }
 
         Status newStatus = statusRepository.findByCode(newStatusCode)
-                .orElseThrow(() -> new RuntimeException("Status not found " + newStatusCode));
+                .orElseThrow(() -> new RuntimeException(
+                        "Status not found " + newStatusCode
+                ));
+
+        validateStatusTransition(
+                oldStatus.getCode(),
+                newStatus.getCode()
+        );
+
+        List<PurchaseOrderItem> items =
+                purchaseOrderItemRepository.findAllByPurchaseOrderId(
+                        purchaseOrderId
+                );
+
+        updatePurchaseOrderItemsStatus(items, newStatus);
+
+        purchaseOrder.setStatus(newStatus);
+        purchaseOrderRepository.save(purchaseOrder);
 
         String username = SecurityContextHolder
                 .getContext()
@@ -416,16 +466,11 @@ public class AdminPurchaseOrderService {
                 employeeLoginRepository.findByUsername(username)
                         .orElseThrow(() -> new RuntimeException("Login to found "+ username));
 
-        Employee employee = employeeLogin.getEmployee();
-
-        purchaseOrder.setStatus(newStatus);
-        purchaseOrderRepository.save(purchaseOrder);
-
         statusHistoryService.recordStatusChange(
                 purchaseOrder,
                 oldStatus,
                 newStatus,
-                employee,
+                employeeLogin.getEmployee(),
                 note.trim()
         );
     }
