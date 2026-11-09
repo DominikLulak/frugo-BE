@@ -35,12 +35,22 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             COALESCE(:statusCode, '') = ''
             OR o.status.code = COALESCE(:statusCode, '')
         )
+        ORDER BY o.id
     """)
     List<AdminOrderListDto> getFilteredOrders(
             @Param("orderNumber") String orderNumber,
             @Param("customerName") String customerName,
             @Param("statusCode") String statusCode
 
+    );
+
+    @Query("""
+        SELECT o
+        FROM Order o
+        WHERE o.id = :id
+    """)
+    Order findOrderById(
+            @Param("id") Integer id
     );
 
     boolean existsByCustomerId(Integer customerId);
