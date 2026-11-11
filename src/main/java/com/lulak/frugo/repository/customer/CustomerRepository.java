@@ -15,6 +15,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             cu.id,
             cu.name,
             cu.companyId,
+            co.id,
             co.code,
             cu.city,
             cu.postalCode,
@@ -59,5 +60,14 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
             @Param("city") String city,
             @Param("postalCode") String postalCode,
             @Param("registered") Boolean registered
+    );
+
+    @Query("""
+        SELECT c
+        FROM Customer c
+        WHERE c.id = :id
+    """)
+    Customer findCustomerById(
+            @Param("id") Integer id
     );
 }

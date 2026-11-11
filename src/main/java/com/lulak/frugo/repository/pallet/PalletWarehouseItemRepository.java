@@ -26,4 +26,23 @@ public interface PalletWarehouseItemRepository extends JpaRepository<PalletWareh
     List<AdminPalletWarehouseItemDto> getPalletItems(
             @Param("palletId") Integer palletId
     );
+
+    @Query("""
+        SELECT new com.lulak.frugo.dto.pallet.AdminPalletWarehouseItemDto(
+            p.productCode,
+            c.code,
+            pt.name,
+            p.name,
+            wi.etiNumber,
+            wi.quantity
+        )
+        FROM PalletWarehouseItem pwi
+        JOIN pwi.warehouseItem.product p
+        JOIN p.productType.category c
+        JOIN p.productType pt
+        JOIN pwi.warehouseItem wi
+    """)
+    List<AdminPalletWarehouseItemDto> findByPalletId(
+            @Param("id") Integer id
+    );
 }

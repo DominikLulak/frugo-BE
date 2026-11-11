@@ -1,5 +1,6 @@
 package com.lulak.frugo.controller.admin;
 
+import com.lulak.frugo.dto.pallet.AdminPalletDetailDto;
 import com.lulak.frugo.dto.pallet.AdminPalletListDto;
 import com.lulak.frugo.dto.pallet.AdminPalletWarehouseItemDto;
 import com.lulak.frugo.service.pallet.AdminPalletService;
@@ -22,7 +23,7 @@ public class AdminPalletController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
+    @PreAuthorize("hasAuthority('STOCKS_READ')")
     public List<AdminPalletListDto> getFilteredPallets(
             @RequestParam(required = false) String etiNumber,
             @RequestParam(required = false) String locationCode,
@@ -36,10 +37,10 @@ public class AdminPalletController {
     }
 
     @GetMapping("/{id}/items")
-    @PreAuthorize("hasAuthority('PRODUCT_READ')")
-    public List<AdminPalletWarehouseItemDto> getPalletItems(
+    @PreAuthorize("hasAuthority('STOCKS_READ')")
+    public AdminPalletDetailDto getPalletDetail(
             @PathVariable Integer id
     ){
-        return adminPalletService.getPalletItems(id);
+        return adminPalletService.getPalletDetail(id);
     }
 }

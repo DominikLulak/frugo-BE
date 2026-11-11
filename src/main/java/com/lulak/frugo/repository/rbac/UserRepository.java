@@ -16,6 +16,7 @@ public interface UserRepository extends JpaRepository<Employee, Integer> {
         SELECT new com.lulak.frugo.dto.rbac.user.AdminUserListDto(
             e.id,
             e.employeeNumber,
+            el.username,
             CONCAT(e.firstName, ' ', e.lastName),
             d.name,
             jp.name
@@ -23,6 +24,9 @@ public interface UserRepository extends JpaRepository<Employee, Integer> {
         FROM Employee e
         JOIN e.jobPosition jp
         JOIN jp.department d
+        JOIN EmployeeLogin el ON e.id = el.employee.id
+        WHERE el.username IS NOT NULL
+            AND TRIM(el.username) <> ''
         ORDER BY e.id
     """)
     List<AdminUserListDto> getAllUsers();

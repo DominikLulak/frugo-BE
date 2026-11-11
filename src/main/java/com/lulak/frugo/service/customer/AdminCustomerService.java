@@ -64,6 +64,7 @@ public class AdminCustomerService {
                 customer.getId(),
                 customer.getName(),
                 customer.getCompanyId(),
+                customer.getCountry().getId(),
                 customer.getCountry().getCode(),
                 customer.getCity(),
                 customer.getPostalCode(),

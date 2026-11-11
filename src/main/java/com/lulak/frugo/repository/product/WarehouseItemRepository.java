@@ -3,7 +3,9 @@ package com.lulak.frugo.repository.product;
 import com.lulak.frugo.dto.product.AdminWarehouseItemDetailDto;
 import com.lulak.frugo.dto.product.AdminWarehouseItemListDto;
 import com.lulak.frugo.model.product.WarehouseItem;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -62,6 +64,7 @@ public interface WarehouseItemRepository extends JpaRepository<WarehouseItem, In
             COALESCE(:warehouseCode, '') = ''
             OR wh.code LIKE CONCAT('%', :warehouseCode, '%') 
         )
+        ORDER BY w.id
     """)
     List<AdminWarehouseItemListDto> getFilteredWarehouseItems(
             @Param("productCode") String productCode,
@@ -112,5 +115,22 @@ public interface WarehouseItemRepository extends JpaRepository<WarehouseItem, In
     """)
     AdminWarehouseItemDetailDto getWarehouseItemDetail(
             @Param("id") Integer id
+    );
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+        SELECT wi
+        FROM WarehouseItem wi
+        WHERE wi.product.id = :productId
+            AND wi.location.canBeOrdered = true
+            AND wi.quantity > wi.allocatedQuantity
+            AND wi.expirationDate >= CURRENT_DATE 
+        ORDER BY 
+            wi.expirationDate ASC,
+            wi.receivedAt ASC,
+            wi.id ASC
+    """)
+    List<WarehouseItem> findAvailableItemsForAllocation(
+            @Param("productId") Integer productId
     );
 }

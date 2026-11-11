@@ -61,6 +61,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>  {
             :isActive IS NULL\s
             OR e.active = :isActive
         )
+        ORDER BY e.id
    \s""")
     List<AdminEmployeeListDto> getFilteredEmployees(
             @Param("employeeNumber") String employeeNumber,
@@ -73,8 +74,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>  {
 
     @Query("""
         SELECT new com.lulak.frugo.dto.employee.AdminEmployeeDetailDto(
+            e.id,
             e.employeeNumber,
             CONCAT(e.firstName, ' ', e.lastName),
+            e.firstName,
+            e.lastName,
             e.address,
             e.city,
             e.postalCode,
@@ -83,8 +87,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer>  {
             e.phone,
             e.email,
             e.systemUsername,
+            s.id,
             s.code,
+            d.id,
             d.name,
+            jp.id,
             jp.name,
             e.active,
             e.terminationDate,

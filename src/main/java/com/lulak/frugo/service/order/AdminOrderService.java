@@ -1,9 +1,11 @@
 package com.lulak.frugo.service.order;
 
+import com.lulak.frugo.dto.OrderItemDto;
 import com.lulak.frugo.dto.order.*;
 import com.lulak.frugo.model.order.Order;
 import com.lulak.frugo.repository.order.OrderItemRepository;
 import com.lulak.frugo.repository.order.OrderRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,20 +28,35 @@ public class AdminOrderService {
 
     public List<AdminOrderListDto> getFilteredOrders(
             String orderNumber,
-            String statusCode,
-            String customerName
+            String customerName,
+            String statusCode
     ){
         return orderRepository.getFilteredOrders(
                 orderNumber,
-                statusCode,
-                customerName
+                customerName,
+                statusCode
         );
     }
 
-
-    public List<AdminOrderItemDetailDto> getOrderItems(
+    @Transactional
+    public OrderDetailDto getOrderDetail(
             Integer orderId
     ){
-        return orderItemRepository.getOrderItems(orderId);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException(
+                        "Order not found " + orderId
+                ));
+        List<AdminOrderItemDetailDto> items =
+                orderItemRepository.getOrderItems(orderId);
+
+        return new OrderDetailDto(
+                order.getId(),
+                order.getOrderNumber(),
+                order.getCustomer().getId(),
+                order.getCustomer().getName(),
+                order.getCreatedAt(),
+                order.getStatus().getCode(),
+                items
+        );
     }
 }

@@ -22,6 +22,6 @@ public class AdminEtiSequenceController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('REFERENCE_DATA_READ')")
     public List<AdminEtiSequenceDto> getAllSequences(){ return etiSequenceService.getAllSequences(); }
 }

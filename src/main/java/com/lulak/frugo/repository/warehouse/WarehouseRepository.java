@@ -30,6 +30,7 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, Integer> {
             s.id,
             s.code,
             s.name,
+            st.id,
             st.code,
             st.name,
             s.description
@@ -60,4 +61,12 @@ public interface WarehouseRepository extends JpaRepository<Warehouse, Integer> {
     List<AdminWarehouseLocationListDto> getSectorLocations(
             @Param("sectorId") Integer sectorId
     );
+
+    boolean existsByCode(String code);
+
+    boolean existsByName(String name);
+
+    boolean existsByCodeAndIdNot(String code, Integer warehouseId);
+
+    boolean existsByNameAndIdNot(String name, Integer warehouseId);
 }

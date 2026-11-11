@@ -2,10 +2,17 @@ package com.lulak.frugo.controller.admin;
 
 import com.lulak.frugo.dto.employee.AdminEmployeeDetailDto;
 import com.lulak.frugo.dto.employee.AdminEmployeeListDto;
+import com.lulak.frugo.dto.employee.CRUD.EmployeeCreateDto;
+import com.lulak.frugo.model.employee.Employee;
+import com.lulak.frugo.model.employee.EmployeeLogin;
 import com.lulak.frugo.service.employee.AdminEmployeeService;
+import com.lulak.frugo.service.employee.CRUD.EmployeeCrudService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -14,13 +21,18 @@ import java.util.List;
 public class AdminEmployeeController {
 
     private final AdminEmployeeService adminEmployeeService;
+    private final EmployeeCrudService employeeCrudService;
 
-    public AdminEmployeeController(AdminEmployeeService adminEmployeeService) {
+    public AdminEmployeeController(
+            AdminEmployeeService adminEmployeeService,
+            EmployeeCrudService employeeCrudService
+    ) {
         this.adminEmployeeService = adminEmployeeService;
+        this.employeeCrudService = employeeCrudService;
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('EMPLOYEES_READ')")
     public List<AdminEmployeeListDto> getEmployees(
             @RequestParam(required = false) String employeeNumber,
             @RequestParam(required = false) String name,
@@ -40,10 +52,62 @@ public class AdminEmployeeController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('EMPLOYEE_READ')")
+    @PreAuthorize("hasAuthority('EMPLOYEES_READ')")
     public AdminEmployeeDetailDto getEmployeeDetail(
             @PathVariable Integer id
     ){
         return adminEmployeeService.getEmployeeDetail(id);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('EMPLOYEES_CREATE')")
+    public ResponseEntity<Employee> createEmployee(
+            @Valid @RequestBody EmployeeCreateDto dto
+    ){
+        Employee employee = employeeCrudService.createEmployee(dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(employee);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEES_EDIT')")
+    public ResponseEntity<Employee> updateEmployee(
+            @PathVariable Integer id,
+            @Valid @RequestBody EmployeeCreateDto dto
+    ){
+        Employee employee = employeeCrudService.updateEmployee(id, dto);
+
+        return ResponseEntity.ok(employee);
+    }
+
+    @PostMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEES_MANAGE')")
+    public ResponseEntity<EmployeeLogin> createEmployeeLogin(
+            @PathVariable Integer id
+    ){
+        EmployeeLogin employeeLogin = employeeCrudService.createLogin(id);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(employeeLogin);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('EMPLOYEES_MANAGE')")
+    public ResponseEntity<Void> deleteEmployeeLogin(
+            @PathVariable Integer id
+    ){
+        employeeCrudService.deleteLogin(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/active")
+    @PreAuthorize("hasAuthority('EMPLOYEES_MANAGE')")
+    public ResponseEntity<Employee> setEmployeeActive(
+            @PathVariable Integer id,
+            @RequestParam boolean active
+    ){
+        Employee employee = employeeCrudService.setEmployeeActive(id, active);
+
+        return ResponseEntity.ok(employee);
     }
 }

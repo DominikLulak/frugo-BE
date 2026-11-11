@@ -22,7 +22,7 @@ public class AdminShipmentController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('SHIPMENT_READ')")
+    @PreAuthorize("hasAuthority('SHIPMENTS_READ')")
     public List<AdminShipmentListDto> getShipments(
             @RequestParam(required = false) String shipmentNumber,
             @RequestParam(required = false) String orderNumber,
@@ -36,7 +36,7 @@ public class AdminShipmentController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('SHIPMENT_READ')")
+    @PreAuthorize("hasAuthority('SHIPMENTS_READ')")
     public AdminShipmentDetailDto getShipmentDetail(
             @PathVariable Integer id
     ){

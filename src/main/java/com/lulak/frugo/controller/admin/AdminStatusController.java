@@ -20,6 +20,6 @@ public class AdminStatusController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('REFERENCE_DATA_READ')")
     public List<AdminStatusDto> getStatuses(){ return adminStatusService.getAllStatuses(); }
 }

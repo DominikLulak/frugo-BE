@@ -59,4 +59,10 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
     List<AdminRoleUserListDto> getRoleUsers(
             @Param("roleId") Integer roleId
     );
+
+    boolean existsByCode(String code);
+    boolean existsByName(String name);
+
+    boolean existsByCodeAndIdNot(String code, Integer roleId);
+    boolean existsByNameAndIdNot(String name, Integer roleId);
 }

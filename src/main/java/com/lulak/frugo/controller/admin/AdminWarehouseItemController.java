@@ -22,7 +22,7 @@ public class AdminWarehouseItemController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('STOCKS_READ')")
     public List<AdminWarehouseItemListDto> getWarehouseItems(
             @RequestParam(required = false) String productCode,
             @RequestParam(required = false) String name,
@@ -42,7 +42,7 @@ public class AdminWarehouseItemController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('WAREHOUSE_READ')")
+    @PreAuthorize("hasAuthority('STOCKS_READ')")
     public AdminWarehouseItemDetailDto getWarehouseItemDetail(
             @PathVariable Integer id
     ){
