@@ -7,20 +7,23 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface EventLogRepository extends JpaRepository<EventLog, Integer> {
+public interface EventLogRepository extends JpaRepository<EventLog, Long> {
 
     @Query("""
         SELECT new com.lulak.frugo.dto.event.AdminEventLogListDto(
             el.id,
-            ed.code,
-            el.createdAt,
+            el.reference,
+            eld.code,
+            el.startedAt,
+            el.finishedAt,
+            el.status,
             CONCAT(e.firstName, ' ', e.lastName),
             el.description 
         )
         FROM EventLog el
-        JOIN el.eventDefinition ed
+        JOIN el.eventLogDefinition eld
         LEFT JOIN el.employee e
-        ORDER BY el.createdAt DESC 
+        ORDER BY el.id DESC 
     """)
     List<AdminEventLogListDto> getAllEventLogs();
 }

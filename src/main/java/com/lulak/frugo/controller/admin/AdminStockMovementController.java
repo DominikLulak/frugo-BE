@@ -2,7 +2,7 @@ package com.lulak.frugo.controller.admin;
 
 import com.lulak.frugo.dto.event.AdminStockMovementDetailDto;
 import com.lulak.frugo.dto.event.AdminStockMovementListDto;
-import com.lulak.frugo.service.event.AdminStockMovementService;
+import com.lulak.frugo.service.event.StockMovementQueryService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,12 +13,12 @@ import java.util.List;
 @CrossOrigin("*")
 public class AdminStockMovementController {
 
-    private final AdminStockMovementService adminStockMovementService;
+    private final StockMovementQueryService stockMovementQueryService;
 
     public AdminStockMovementController(
-            AdminStockMovementService adminStockMovementService
+            StockMovementQueryService stockMovementQueryService
     ){
-        this.adminStockMovementService = adminStockMovementService;
+        this.stockMovementQueryService = stockMovementQueryService;
     }
 
     @GetMapping
@@ -30,7 +30,7 @@ public class AdminStockMovementController {
             @RequestParam(required = false) String toLocation,
             @RequestParam(required = false) String employeeNumber
     ){
-        return adminStockMovementService.getFilteredStockMovements(
+        return stockMovementQueryService.getFilteredStockMovements(
                 eventCode,
                 etiNumber,
                 fromLocation,
@@ -42,8 +42,8 @@ public class AdminStockMovementController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('EVENTS_READ')")
     public AdminStockMovementDetailDto getStockMovementDetail(
-            @PathVariable Integer id
+            @PathVariable Long id
     ){
-        return adminStockMovementService.getStockMovementDetail(id);
+        return stockMovementQueryService.getStockMovementDetail(id);
     }
 }

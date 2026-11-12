@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class AdminStockMovementDetailDto {
 
-    private Integer id;
+    private Long id;
 
     private LocalDateTime createdAt;
 
@@ -29,7 +29,7 @@ public class AdminStockMovementDetailDto {
     private String purchaseOrderNumber;
 
     public AdminStockMovementDetailDto(
-            Integer id,
+            Long id,
             LocalDateTime createdAt,
             String eventCode,
             String eventName,
@@ -64,7 +64,7 @@ public class AdminStockMovementDetailDto {
         this.purchaseOrderNumber = purchaseOrderNumber;
     }
 
-    public Integer getId(){ return id; }
+    public Long getId(){ return id; }
     public LocalDateTime getCreatedAt(){ return createdAt; }
     public String getEventCode(){ return eventCode; }
     public String getEventName(){ return eventName; }

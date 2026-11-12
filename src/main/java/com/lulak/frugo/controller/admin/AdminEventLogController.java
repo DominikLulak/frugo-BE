@@ -2,7 +2,7 @@ package com.lulak.frugo.controller.admin;
 
 import com.lulak.frugo.dto.event.AdminEventLogDetailDto;
 import com.lulak.frugo.dto.event.AdminEventLogListDto;
-import com.lulak.frugo.service.event.AdminEventLogService;
+import com.lulak.frugo.service.event.EventLogQueryService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,25 +12,25 @@ import java.util.List;
 @RequestMapping("/api/admin/eventLogs")
 public class AdminEventLogController {
 
-    private final AdminEventLogService eventLogService;
+    private final EventLogQueryService eventLogQueryService;
 
     public AdminEventLogController(
-            AdminEventLogService eventLogService
+            EventLogQueryService eventLogQueryService
     ){
-        this.eventLogService = eventLogService;
+        this.eventLogQueryService = eventLogQueryService;
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('EVENTS_READ')")
     public List<AdminEventLogListDto> getEventLogs(){
-        return eventLogService.getAllEventLogs();
+        return eventLogQueryService.getAllEventLogs();
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('EVENTS_READ')")
     public AdminEventLogDetailDto getEventLogDetails(
-            @PathVariable Integer id
+            @PathVariable Long id
     ){
-        return eventLogService.getEventLogDetail(id);
+        return eventLogQueryService.getEventLogDetail(id);
     }
 }

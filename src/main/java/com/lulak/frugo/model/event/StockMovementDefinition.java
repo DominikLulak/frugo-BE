@@ -3,8 +3,8 @@ package com.lulak.frugo.model.event;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "event_definition")
-public class EventDefinition {
+@Table(name = "stock_movement_definition")
+public class StockMovementDefinition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

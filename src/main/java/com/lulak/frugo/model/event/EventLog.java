@@ -2,7 +2,6 @@ package com.lulak.frugo.model.event;
 
 import com.lulak.frugo.model.employee.Employee;
 import jakarta.persistence.*;
-import tools.jackson.databind.JsonNode;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -14,36 +13,55 @@ public class EventLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "event_definition_id", nullable = false)
-    private EventDefinition eventDefinition;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_log_definition_id", nullable = false)
+    private EventLogDefinition eventLogDefinition;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "started_at", nullable = false)
+    private LocalDateTime startedAt;
 
-    @ManyToOne
+    @Column(name = "finished_at")
+    private LocalDateTime finishedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @Column(name = "description")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 30)
+    private EventLogStatus status;
+
+    @Column(name = "reference", length = 150)
+    private String reference;
+
+    @Column(name = "description", nullable = false)
     private String description;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
+    @Column(name = "data", columnDefinition = "jsonb")
     private String data;
 
-    public Integer getId(){ return id; }
+    public Long getId(){ return id; }
 
-    public EventDefinition getEventDefinition(){ return eventDefinition; }
-    public void setEventDefinition(EventDefinition eventDefinition){ this.eventDefinition = eventDefinition; }
+    public EventLogDefinition getEventLogDefinition(){ return eventLogDefinition; }
+    public void setEventLogDefinition(EventLogDefinition eventLogDefinition){ this.eventLogDefinition = eventLogDefinition; }
 
-    public LocalDateTime getCreatedAt(){ return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt){ this.createdAt = createdAt; }
+    public LocalDateTime getStartedAt(){ return startedAt; }
+    public void setStartedAt(LocalDateTime startedAt){ this.startedAt = startedAt; }
+
+    public LocalDateTime getFinishedAt(){ return finishedAt; }
+    public void setFinishedAt(LocalDateTime finishedAt){ this.finishedAt = finishedAt; }
 
     public Employee getEmployee(){ return employee; }
     public void setEmployee(Employee employee){ this.employee = employee; }
+
+    public EventLogStatus getStatus(){ return status; }
+    public void setStatus(EventLogStatus status){ this.status = status; }
+
+    public String getReference(){ return reference; }
+    public void setReference(String reference){ this.reference = reference; }
 
     public String getDescription(){ return description; }
     public void setDescription(String description){ this.description = description; }

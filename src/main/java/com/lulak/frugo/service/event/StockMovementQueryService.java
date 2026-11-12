@@ -3,21 +3,23 @@ package com.lulak.frugo.service.event;
 import com.lulak.frugo.dto.event.AdminStockMovementDetailDto;
 import com.lulak.frugo.dto.event.AdminStockMovementListDto;
 import com.lulak.frugo.repository.event.StockMovementRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class AdminStockMovementService {
+public class StockMovementQueryService {
 
     private final StockMovementRepository stockMovementRepository;
 
-    public AdminStockMovementService(
+    public StockMovementQueryService(
             StockMovementRepository stockMovementRepository
     ){
         this.stockMovementRepository = stockMovementRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<AdminStockMovementListDto> getFilteredStockMovements(
             String eventCode,
             String etiNumber,
@@ -34,7 +36,8 @@ public class AdminStockMovementService {
         );
     }
 
-    public AdminStockMovementDetailDto getStockMovementDetail(Integer id){
+    @Transactional(readOnly = true)
+    public AdminStockMovementDetailDto getStockMovementDetail(Long id){
         AdminStockMovementDetailDto stockMovement =
                 stockMovementRepository.getStockMovementDetail(id);
 

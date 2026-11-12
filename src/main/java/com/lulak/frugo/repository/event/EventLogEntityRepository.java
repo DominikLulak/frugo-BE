@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface EventLogEntityRepository extends JpaRepository<EventLogEntity, Integer> {
+public interface EventLogEntityRepository extends JpaRepository<EventLogEntity, Long> {
 
-    List<EventLogEntity> findByEventLogId(Integer eventLogId);
+    List<EventLogEntity> findByEventLogId(Long eventLogId);
 }

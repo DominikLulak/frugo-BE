@@ -3,14 +3,22 @@ package com.lulak.frugo.model.event;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "event_log_entity")
+@Table(
+        name = "event_log_entity",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_event_log_entity",
+                        columnNames = {"event_log_id", "entity_type", "entity_id"}
+                )
+        }
+)
 public class EventLogEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_log_id", nullable = false)
     private EventLog eventLog;
 
@@ -20,7 +28,7 @@ public class EventLogEntity {
     @Column(name = "entity_id", nullable = false)
     private Integer entityId;
 
-    public Integer getId(){ return id; }
+    public Long getId(){ return id; }
 
     public EventLog getEventLog(){ return eventLog; }
     public void setEventLog(EventLog eventLog){ this.eventLog = eventLog; }

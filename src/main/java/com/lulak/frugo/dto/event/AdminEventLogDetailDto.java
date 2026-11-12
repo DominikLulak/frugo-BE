@@ -6,9 +6,13 @@ import java.util.Map;
 
 public class AdminEventLogDetailDto {
 
-    private final Integer id;
+    private final Long id;
 
-    private final LocalDateTime createdAt;
+    private final LocalDateTime startedAt;
+    private final LocalDateTime finishedAt;
+
+    private final String status;
+    private final String reference;
 
     private final String eventCode;
     private final String eventName;
@@ -21,11 +25,15 @@ public class AdminEventLogDetailDto {
 
     private final Map<String, Object> data;
 
-    private List<AdminEventLogEntityDto> entities;
+    private final List<AdminEventLogEntityDto> entities;
+    private final List<EventLogStepDto> steps;
 
     public AdminEventLogDetailDto(
-            Integer id,
-            LocalDateTime createdAt,
+            Long id,
+            LocalDateTime startedAt,
+            LocalDateTime finishedAt,
+            String status,
+            String reference,
             String eventCode,
             String eventName,
             String eventDescription,
@@ -33,10 +41,14 @@ public class AdminEventLogDetailDto {
             String employeeName,
             String description,
             Map<String, Object> data,
-            List<AdminEventLogEntityDto> entities
+            List<AdminEventLogEntityDto> entities,
+            List<EventLogStepDto> steps
     ){
         this.id = id;
-        this.createdAt = createdAt;
+        this.startedAt = startedAt;
+        this.finishedAt = finishedAt;
+        this.status = status;
+        this.reference= reference;
         this.eventCode = eventCode;
         this.eventName = eventName;
         this.eventDescription = eventDescription;
@@ -45,10 +57,14 @@ public class AdminEventLogDetailDto {
         this.description = description;
         this.data = data;
         this.entities = entities;
+        this.steps = steps;
     }
 
-    public Integer getId(){ return id; }
-    public LocalDateTime getCreatedAt(){ return createdAt; }
+    public Long getId(){ return id; }
+    public LocalDateTime getStartedAt(){ return startedAt; }
+    public LocalDateTime getFinishedAt(){ return finishedAt; }
+    public String getStatus(){ return status; }
+    public String getReference(){ return reference; }
     public String getEventCode(){ return eventCode; }
     public String getEventName(){ return eventName; }
     public String getEventDescription(){ return eventDescription; }
@@ -57,4 +73,5 @@ public class AdminEventLogDetailDto {
     public String getDescription(){ return description; }
     public Map<String, Object> getData(){ return data; }
     public List<AdminEventLogEntityDto> getEntities(){ return entities; }
+    public List<EventLogStepDto> getSteps(){ return steps; }
 }
