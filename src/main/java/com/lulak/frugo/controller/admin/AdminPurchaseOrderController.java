@@ -1,8 +1,17 @@
 package com.lulak.frugo.controller.admin;
 
-import com.lulak.frugo.dto.purchaseOrders.*;
+import com.lulak.frugo.dto.purchaseOrders.create.PurchaseOrderCreateDto;
+import com.lulak.frugo.dto.purchaseOrders.create.PurchaseOrderItemCreateDto;
+import com.lulak.frugo.dto.purchaseOrders.list.AdminPurchaseOrderDetailDto;
+import com.lulak.frugo.dto.purchaseOrders.list.AdminPurchaseOrderListDto;
+import com.lulak.frugo.dto.purchaseOrders.receiving.PurchaseOrderReceivingDto;
+import com.lulak.frugo.dto.purchaseOrders.receiving.PurchaseOrderReceivingResultDto;
+import com.lulak.frugo.dto.purchaseOrders.status.PurchaseOrderStatusChangeDto;
+import com.lulak.frugo.dto.purchaseOrders.update.PurchaseOrderItemUpdateDto;
+import com.lulak.frugo.dto.purchaseOrders.update.PurchaseOrderUpdateDto;
 import com.lulak.frugo.model.purchaseOrders.PurchaseOrder;
 import com.lulak.frugo.service.purchaseOrders.AdminPurchaseOrderService;
+import com.lulak.frugo.service.purchaseOrders.receiving.PurchaseOrderReceivingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,11 +26,14 @@ import java.util.List;
 public class AdminPurchaseOrderController {
 
     private final AdminPurchaseOrderService purchaseOrderService;
+    private final PurchaseOrderReceivingService purchaseOrderReceivingService;
 
     public AdminPurchaseOrderController(
-            AdminPurchaseOrderService purchaseOrderService
+            AdminPurchaseOrderService purchaseOrderService,
+            PurchaseOrderReceivingService purchaseOrderReceivingService
     ){
         this.purchaseOrderService = purchaseOrderService;
+        this.purchaseOrderReceivingService = purchaseOrderReceivingService;
     }
 
     @GetMapping
@@ -142,5 +154,23 @@ public class AdminPurchaseOrderController {
         );
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{purchaseOrderId}/receiving")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_MANAGE')")
+    public ResponseEntity<PurchaseOrderReceivingResultDto> receivePurchaseOrder(
+            @PathVariable Integer purchaseOrderId,
+            @Valid @RequestBody PurchaseOrderReceivingDto dto
+    ){
+        if(!purchaseOrderId.equals(dto.getPurchaseOrderId())){
+            throw new IllegalArgumentException(
+                    "Purchase order ID in URL does not match request body"
+            );
+        }
+
+        PurchaseOrderReceivingResultDto result =
+                purchaseOrderReceivingService.receivedPurchaseOrder(dto);
+
+        return ResponseEntity.ok(result);
     }
 }

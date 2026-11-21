@@ -1,6 +1,12 @@
 package com.lulak.frugo.service.purchaseOrders;
 
-import com.lulak.frugo.dto.purchaseOrders.*;
+import com.lulak.frugo.dto.purchaseOrders.create.PurchaseOrderCreateDto;
+import com.lulak.frugo.dto.purchaseOrders.create.PurchaseOrderItemCreateDto;
+import com.lulak.frugo.dto.purchaseOrders.list.AdminPurchaseOrderDetailDto;
+import com.lulak.frugo.dto.purchaseOrders.list.AdminPurchaseOrderItemDto;
+import com.lulak.frugo.dto.purchaseOrders.list.AdminPurchaseOrderListDto;
+import com.lulak.frugo.dto.purchaseOrders.update.PurchaseOrderItemUpdateDto;
+import com.lulak.frugo.dto.purchaseOrders.update.PurchaseOrderUpdateDto;
 import com.lulak.frugo.model.Country;
 import com.lulak.frugo.model.Status;
 import com.lulak.frugo.model.employee.Employee;
@@ -424,12 +430,11 @@ public class AdminPurchaseOrderService {
             String newStatusCode,
             String note
     ){
-        PurchaseOrder purchaseOrder =
-                purchaseOrderRepository.findPurchaseOrderById(purchaseOrderId);
-
-        if(purchaseOrder == null){
-            throw new RuntimeException("Purchase order not found " + purchaseOrderId);
-        }
+        PurchaseOrder purchaseOrder = purchaseOrderRepository
+                .findByIdForUpdate(purchaseOrderId)
+                .orElseThrow(() -> new RuntimeException(
+                        "Purchase order not found " + purchaseOrderId
+                ));
 
         if(note == null || note.isBlank()){
             throw new RuntimeException("A note is required when changing the purchase order status!");
@@ -448,7 +453,7 @@ public class AdminPurchaseOrderService {
         );
 
         List<PurchaseOrderItem> items =
-                purchaseOrderItemRepository.findAllByPurchaseOrderId(
+                purchaseOrderItemRepository.findAllByPurchaseOrderIdForUpdate(
                         purchaseOrderId
                 );
 

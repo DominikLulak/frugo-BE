@@ -1,6 +1,6 @@
 package com.lulak.frugo.repository.purchaseOrders;
 
-import com.lulak.frugo.dto.purchaseOrders.AdminSupplierListDto;
+import com.lulak.frugo.dto.purchaseOrders.list.AdminSupplierListDto;
 import com.lulak.frugo.model.purchaseOrders.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +11,7 @@ import java.util.List;
 public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
     @Query("""
-        SELECT new com.lulak.frugo.dto.purchaseOrders.AdminSupplierListDto(
+        SELECT new com.lulak.frugo.dto.purchaseOrders.list.AdminSupplierListDto(
             sup.id,
             sup.name,
             sup.internalCode,

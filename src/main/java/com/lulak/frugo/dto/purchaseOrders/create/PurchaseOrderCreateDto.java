@@ -1,4 +1,4 @@
-package com.lulak.frugo.dto.purchaseOrders;
+package com.lulak.frugo.dto.purchaseOrders.create;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
