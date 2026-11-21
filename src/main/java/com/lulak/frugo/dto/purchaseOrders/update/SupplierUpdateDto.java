@@ -1,9 +1,9 @@
-package com.lulak.frugo.dto.purchaseOrders;
+package com.lulak.frugo.dto.purchaseOrders.update;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-public class SupplierCreateDto {
+public class SupplierUpdateDto {
 
     @NotBlank
     @Size(max = 255)

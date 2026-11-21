@@ -1,17 +1,20 @@
 package com.lulak.frugo.repository.purchaseOrders;
 
-import com.lulak.frugo.dto.purchaseOrders.AdminPurchaseOrderListDto;
+import com.lulak.frugo.dto.purchaseOrders.list.AdminPurchaseOrderListDto;
 import com.lulak.frugo.model.purchaseOrders.PurchaseOrder;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Integer> {
 
     @Query("""
-        SELECT new com.lulak.frugo.dto.purchaseOrders.AdminPurchaseOrderListDto(
+        SELECT new com.lulak.frugo.dto.purchaseOrders.list.AdminPurchaseOrderListDto(
             po.id,
             po.purchaseOrderNumber,
             sup.name,
@@ -59,4 +62,12 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, In
     );
 
     boolean existsBySupplierId(Integer supplierId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+        SELECT po
+        FROM PurchaseOrder po
+        WHERE po.id = :id
+    """)
+    Optional<PurchaseOrder> findByIdForUpdate(@Param("id") Integer id);
 }

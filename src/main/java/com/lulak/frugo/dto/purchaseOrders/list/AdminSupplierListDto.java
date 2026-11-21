@@ -1,4 +1,4 @@
-package com.lulak.frugo.dto.purchaseOrders;
+package com.lulak.frugo.dto.purchaseOrders.list;
 
 public class AdminSupplierListDto {
 

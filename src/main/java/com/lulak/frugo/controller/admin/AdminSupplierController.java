@@ -1,8 +1,8 @@
 package com.lulak.frugo.controller.admin;
 
-import com.lulak.frugo.dto.purchaseOrders.AdminSupplierListDto;
-import com.lulak.frugo.dto.purchaseOrders.SupplierCreateDto;
-import com.lulak.frugo.dto.purchaseOrders.SupplierUpdateDto;
+import com.lulak.frugo.dto.purchaseOrders.list.AdminSupplierListDto;
+import com.lulak.frugo.dto.purchaseOrders.create.SupplierCreateDto;
+import com.lulak.frugo.dto.purchaseOrders.update.SupplierUpdateDto;
 import com.lulak.frugo.model.purchaseOrders.Supplier;
 import com.lulak.frugo.service.purchaseOrders.AdminSupplierService;
 import org.springframework.http.HttpStatus;
