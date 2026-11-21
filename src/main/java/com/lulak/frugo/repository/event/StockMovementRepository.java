@@ -9,12 +9,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface StockMovementRepository extends JpaRepository<StockMovement, Integer> {
+public interface StockMovementRepository extends JpaRepository<StockMovement, Long> {
 
     @Query("""
         SELECT new com.lulak.frugo.dto.event.AdminStockMovementListDto(
             sm.id,
-            ed.code,
+            smd.code,
             wi.etiNumber,
             sm.createdAt,
             sm.quantity,
@@ -23,14 +23,14 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, In
             e.employeeNumber
         )
         FROM StockMovement sm
-        JOIN sm.eventDefinition ed
+        JOIN sm.stockMovementDefinition smd
         JOIN sm.warehouseItem wi
         LEFT JOIN sm.fromLocation fl
         LEFT JOIN sm.toLocation tl
         JOIN sm.employee e
         WHERE(
             COALESCE(:eventCode, '') = ''
-            OR LOWER(ed.code)
+            OR LOWER(smd.code)
                 LIKE LOWER(CONCAT('%', :eventCode, '%')) 
         )
         AND(
@@ -53,6 +53,7 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, In
             OR LOWER(e.employeeNumber)
                 LIKE LOWER(CONCAT('%', :employeeNumber, '%')) 
         )
+        ORDER BY sm.id DESC
     """)
     List<AdminStockMovementListDto> getFilteredStockMovements(
             @Param("eventCode") String eventCode,
@@ -66,9 +67,9 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, In
         SELECT new com.lulak.frugo.dto.event.AdminStockMovementDetailDto(
             sm.id,
             sm.createdAt,
-            ed.code,
-            ed.name,
-            ed.description,
+            smd.code,
+            smd.name,
+            smd.description,
             wi.etiNumber,
             nwi.etiNumber,
             sm.quantity,
@@ -82,7 +83,7 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, In
             po.purchaseOrderNumber 
         )
         FROM StockMovement sm
-        JOIN sm.eventDefinition ed
+        JOIN sm.stockMovementDefinition smd
         JOIN sm.warehouseItem wi
         LEFT JOIN sm.newWarehouseItem nwi
         LEFT JOIN sm.fromLocation fl
@@ -95,6 +96,6 @@ public interface StockMovementRepository extends JpaRepository<StockMovement, In
         WHERE sm.id = :stockMovementId
     """)
     AdminStockMovementDetailDto getStockMovementDetail(
-            @Param("stockMovementId") Integer stockMovementId
+            @Param("stockMovementId") Long stockMovementId
     );
 }

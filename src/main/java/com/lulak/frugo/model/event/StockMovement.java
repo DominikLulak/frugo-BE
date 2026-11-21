@@ -17,58 +17,58 @@ public class StockMovement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "event_definition_id", nullable = false)
-    private EventDefinition eventDefinition;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stock_movement_definition_id", nullable = false)
+    private StockMovementDefinition stockMovementDefinition;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_order_id")
     private PurchaseOrder purchaseOrder;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "warehouse_item_id", nullable = false)
     private WarehouseItem warehouseItem;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "new_warehouse_item_id")
     private WarehouseItem newWarehouseItem;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "from_location_id")
     private Location fromLocation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_location_id")
     private Location toLocation;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pallet_id")
     private Pallet pallet;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipment_id")
     private Shipment shipment;
 
-    public Integer getId(){ return id; }
+    public Long getId(){ return id; }
 
-    public EventDefinition getEventDefinition(){ return eventDefinition; }
-    public void setEventDefinition(EventDefinition eventDefinition){ this.eventDefinition = eventDefinition; }
+    public StockMovementDefinition getStockMovementDefinition(){ return stockMovementDefinition; }
+    public void setStockMovementDefinition(StockMovementDefinition stockMovementDefinition){ this.stockMovementDefinition = stockMovementDefinition; }
 
     public LocalDateTime getCreatedAt(){ return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt){ this.createdAt = createdAt; }

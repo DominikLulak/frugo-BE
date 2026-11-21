@@ -4,17 +4,22 @@ import java.time.LocalDateTime;
 
 public class AdminStockMovementListDto {
 
-    private Integer id;
+    private Long id;
+
     private String eventCode;
     private String etiNumber;
+
     private LocalDateTime createdAt;
+
     private Integer quantity;
+
     private String fromLocation;
     private String toLocation;
+
     private String employeeNumber;
 
     public AdminStockMovementListDto(
-            Integer id,
+            Long id,
             String eventCode,
             String etiNumber,
             LocalDateTime createdAt,
@@ -33,7 +38,7 @@ public class AdminStockMovementListDto {
         this.employeeNumber = employeeNumber;
     }
 
-    public Integer getId(){ return id; }
+    public Long getId(){ return id; }
     public String getEventCode(){ return eventCode; }
     public String getEtiNumber(){ return etiNumber; }
     public LocalDateTime getCreatedAt(){ return createdAt; }
