@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="cs"
+    xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Purchase Order</title>
+
+    <style>
+        @page  {
+            size: A4;
+            margin: 35px;
+        }
+
+        *{
+            box-sizing: border-box;
+        }
+
+        body{
+            font-family: "DejaVu Sans", sans-serif;
+            color: #263238;
+            font-size: 11px;
+            margin: 0;
+        }
+
+        .header{
+            background-color: #3EA41D;
+            color: white;
+            padding: 24px 28px;
+        }
+
+        .header-title{
+            font-size: 23px;
+            font-weight: bold;
+            margin: 0 0 8px 0;
+        }
+
+        .header-subtitle{
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .document-number{
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 16px;
+        }
+
+        .content{
+            padding: 25px 28px;
+        }
+
+        .top-section{
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        .top-section td{
+            vertical-align: top;
+        }
+
+        .section-title{
+            color: #3EA41D;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .info-table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table td{
+            padding: 5px 0;
+        }
+
+        .info-label{
+            color: #718096;
+            width: 115px;
+        }
+
+        .info-value{
+            font-weight: bold;
+        }
+
+        .qr-container{
+            text-align: right;
+        }
+
+        .qr-code{
+            width: 115px;
+            height: 115px;
+        }
+
+        .qr-caption{
+            color: #718096;
+            font-size: 9px;
+            margin-top: 5px;
+        }
+
+        .summary{
+            width: 100%;
+            margin: 20px 0 25px 0;
+            border-collapse: separate;
+            border-spacing: 8px 0;
+        }
+
+        .summary td{
+            width: 33.33%;
+            background-color: #F3F7F1;
+            padding: 13px;
+        }
+
+        .summary-label{
+            color: #718096;
+            font-size: 9px;
+            margin-bottom: 6px;
+        }
+
+        .summary-value{
+            color: #263238;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .summary-unit{
+            font-size: 9px;
+            color: #718096;
+        }
+
+        .items-title{
+            color: #3EA41D;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .items-table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table th{
+            background-color: #263238;
+            color: white;
+            text-align: left;
+            padding: 10px 7px;
+            font-size: 9px;
+        }
+
+        .items-table td{
+            padding: 10px 7px;
+            border-bottom: 1px solid #E5E7EB;
+            vertical-align: middle;
+        }
+
+        .items-table tr:nth-child(even){
+            background-color: #F8FAF8;
+        }
+
+        .product-name{
+            font-weight: bold;
+        }
+
+        .product-detail{
+            color: #718096;
+            font-size: 9px;
+            margin-top: 4px;
+        }
+
+        .number{
+
+            white-space: nowrap;
+        }
+
+        .remaining{
+            color: #3EA41D;
+            font-weight: bold;
+        }
+
+        .footer{
+            margin-top: 35px;
+            padding-top: 12px;
+            border-top: 1px solid #E5E7EB;
+            color: #718096;
+            font-size: 9px;
+        }
+
+        .footer-right{
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">FRUGO</div>
+
+        <div class="header-subtitle">Purchase order document</div>
+
+        <div class="document-number"
+            th:text="${purchaseOrder.purchaseOrderNumber}"
+        >
+            PO-2026-00001
+        </div>
+    </div>
+
+    <div class="content">
+        <table class="top-section">
+            <tr>
+                <td style="width: 70%;">
+
+                    <div class="section-title">
+                        INFORMATION
+                    </div>
+
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label">
+                                Created:
+                            </td>
+
+                            <td class="info-value"
+                                th:text="${createdAt}"
+                            >
+                                21.11.2026 10:00
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="info-label">
+                                Status:
+                            </td>
+
+                            <td class="info-value"
+                                th:text="${purchaseOrder.statusCode}"
+                            >
+                                ENTERED
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="info-label">
+                                Supplier:
+                            </td>
+
+                            <td class="info-value"
+                                th:text="${purchaseOrder.supplierName}"
+                            >
+                                Supplier name
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="info-label">
+                                Supplier code:
+                            </td>
+
+                            <td class="info-value"
+                                th:text="${purchaseOrder.supplierInternalCode}"
+                            >
+                                SUP-001
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="info-label">
+                                Created by:
+                            </td>
+
+                            <td class="info-value"
+                                th:text="${purchaseOrder.employeeName}"
+                            >
+                                Employee name
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td class="qr-container" style="width: 30%;">
+
+                    <img
+                        class="qr-code"
+                        th:src="${qrCode}"
+                        alt="Purchase order QR code"
+                    />
+
+                    <div class="qr-caption">
+                        Scan to load purchase order
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <table class="summary">
+            <tr>
+                <td>
+                    <div class="summary-label">
+                        ORDERED
+                    </div>
+
+                    <div class="summary-value">
+                        <span th:text="${totalQuantity}">0</span>
+                        <span class="summary-unit">kg</span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="summary-label">
+                        RECEIVED
+                    </div>
+
+                    <div class="summary-value">
+                        <span th:text="${totalReceivedQuantity}">0</span>
+                        <span class="summary-unit">kg</span>
+                    </div>
+                </td>
+
+                <td>
+                    <div class="summary-label">
+                        REMAINING
+                    </div>
+
+                    <div class="summary-value">
+                        <span th:text="${totalRemainingQuantity}">0</span>
+                        <span class="summary-unit">kg</span>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="items-title">
+            ORDER ITEMS
+        </div>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th style="width: 30%;">PRODUCT</th>
+                    <th style="width: 26%;">COUNTRY</th>
+                    <th class="number" style="width: 14%;">ORDERED</th>
+                    <th class="number" style="width: 14%;">RECEIVED</th>
+                    <th class="number" style="width: 16%;">REMAINING</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr th:each="item : ${purchaseOrder.items}">
+
+                    <td>
+                        <div class="product-name"
+                            th:text="${item.productName}"
+                        >
+                            Product name
+                        </div>
+
+                        <div class="product-detail"
+                             th:text="${item.categoryCode + ' - ' + item.productType}"
+                        >
+                            CATEGORY - TYPE
+                        </div>
+                    </td>
+
+                    <td th:text="${item.countryName}">
+                        Country
+                    </td>
+
+                    <td class="number"
+                        th:text="${item.quantity + ' kg'}"
+                    >
+                        100 kg
+                    </td>
+
+                    <td class="number"
+                        th:text="${item.receivedQuantity + ' kg'}"
+                    >
+                        50 kg
+                    </td>
+
+                    <td class="number remaining"
+                        th:text="${(item.quantity - item.receivedQuantity) + ' kg'}"
+                    >
+                        50 kg
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <table style="width: 100%;">
+                <tr>
+                    <td>
+                        FRUGO - Purchase order
+                    </td>
+
+                    <td class="footer-right">
+                        Generated automatically by Frugo system
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
