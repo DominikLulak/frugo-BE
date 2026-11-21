@@ -11,13 +11,15 @@ import com.lulak.frugo.dto.purchaseOrders.update.PurchaseOrderItemUpdateDto;
 import com.lulak.frugo.dto.purchaseOrders.update.PurchaseOrderUpdateDto;
 import com.lulak.frugo.model.purchaseOrders.PurchaseOrder;
 import com.lulak.frugo.service.purchaseOrders.AdminPurchaseOrderService;
+import com.lulak.frugo.service.purchaseOrders.PurchaseOrderPdfService;
 import com.lulak.frugo.service.purchaseOrders.receiving.PurchaseOrderReceivingService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.nio.charset.StandardCharsets;
+import java.security.PublicKey;
 import java.util.List;
 
 @RestController
@@ -27,13 +29,16 @@ public class AdminPurchaseOrderController {
 
     private final AdminPurchaseOrderService purchaseOrderService;
     private final PurchaseOrderReceivingService purchaseOrderReceivingService;
+    private final PurchaseOrderPdfService purchaseOrderPdfService;
 
     public AdminPurchaseOrderController(
             AdminPurchaseOrderService purchaseOrderService,
-            PurchaseOrderReceivingService purchaseOrderReceivingService
+            PurchaseOrderReceivingService purchaseOrderReceivingService,
+            PurchaseOrderPdfService purchaseOrderPdfService
     ){
         this.purchaseOrderService = purchaseOrderService;
         this.purchaseOrderReceivingService = purchaseOrderReceivingService;
+        this.purchaseOrderPdfService = purchaseOrderPdfService;
     }
 
     @GetMapping
@@ -49,6 +54,30 @@ public class AdminPurchaseOrderController {
                 supplierName,
                 employeeName,
                 statusCode
+        );
+    }
+
+    @GetMapping("/{id}/pdf")
+    @PreAuthorize("hasAuthority('PURCHASE_ORDERS_READ')")
+    public ResponseEntity<byte[]> generatePurchaseOrderPdf(
+            @PathVariable Integer id
+    ){
+        byte[] pdf = purchaseOrderPdfService.generatePurchaseOrderPdf(id);
+
+        String filename = "purchase-order-" + id + ".pdf";
+
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.APPLICATION_PDF);
+
+        headers.setContentDisposition(
+                ContentDisposition.attachment()
+                        .filename(filename, StandardCharsets.UTF_8)
+                        .build()
+        );
+
+        return new ResponseEntity<>(
+                pdf, headers, HttpStatus.OK
         );
     }
 
