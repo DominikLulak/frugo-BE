@@ -45,4 +45,6 @@ public interface PalletWarehouseItemRepository extends JpaRepository<PalletWareh
     List<AdminPalletWarehouseItemDto> findByPalletId(
             @Param("id") Integer id
     );
+
+    boolean existsByWarehouseItem_Id(Integer warehouseItemId);
 }

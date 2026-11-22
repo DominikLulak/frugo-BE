@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WarehouseItemRepository extends JpaRepository<WarehouseItem, Integer> {
 
@@ -132,5 +133,15 @@ public interface WarehouseItemRepository extends JpaRepository<WarehouseItem, In
     """)
     List<WarehouseItem> findAvailableItemsForAllocation(
             @Param("productId") Integer productId
+    );
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+        SELECT wi
+        FROM WarehouseItem wi
+        WHERE wi.etiNumber = :etiNumber
+    """)
+    Optional<WarehouseItem> findByEtiNumberForUpdate(
+            @Param("etiNumber") String etiNumber
     );
 }
