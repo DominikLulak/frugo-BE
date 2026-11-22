@@ -73,24 +73,7 @@ public class PalletMovementService {
                         "Pallet " + dto.palletEti() + " was not found"
                 ));
 
-        Location targetLocation = getTargetLocation(dto.targetLocationCode());
-        Location currentPalletLocation = pallet.getLocation();
-
-        if (currentPalletLocation.getId().equals(targetLocation.getId())) {
-            throw new IllegalStateException(
-                    "Pallet is already at the target location"
-            );
-        }
-
-        List<PalletWarehouseItem> palletItems =
-                palletWarehouseItemRepository.findAllByPallet_Id(pallet.getId());
-
-        if (palletItems.isEmpty()) {
-            throw new IllegalStateException(
-                    "Pallet does not contain any warehouse items"
-            );
-        }
-
+        // Create main event
         Long eventLogId = eventLogTrackingService.startEvent(
                 EVENT_CODE,
                 employee,
@@ -102,28 +85,83 @@ public class PalletMovementService {
                 )
         );
 
-        Long palletStepId = null;
+        // Register pallet immediately
+        eventLogTrackingService.addEntity(
+                eventLogId,
+                "PALLET",
+                pallet.getId()
+        );
 
         try {
-            // Find shipment and order associated with the pallet
-            Shipment shipment = shipmentItemRepository
-                    .findByPalletIdWithShipmentAndOrder(pallet.getId())
-                    .map(ShipmentItem::getShipment)
-                    .orElse(null);
+            /*
+             * PHASE 1: VALIDATION
+             */
 
-            Order order = shipment != null
-                    ? shipment.getOrder()
-                    : null;
+            // Validate pallet and target location
+            Long palletValidationStepId = eventLogTrackingService.startStep(
+                    eventLogId,
+                    "VALIDATE_PALLET_RELOCATION",
+                    "Validating pallet relocation " + pallet.getPalletNumber(),
+                    Map.of(
+                            "palletEti", pallet.getPalletNumber(),
+                            "targetLocationCode", dto.targetLocationCode()
+                    )
+            );
 
-            // Move individual warehouse items
+            Location targetLocation;
+            Location currentPalletLocation;
+            List<PalletWarehouseItem> palletItems;
+
+            try {
+                targetLocation = getTargetLocation(
+                        dto.targetLocationCode()
+                );
+
+                currentPalletLocation = pallet.getLocation();
+
+                if (currentPalletLocation.getId().equals(targetLocation.getId())) {
+                    throw new IllegalStateException(
+                            "Pallet is already at the target location"
+                    );
+                }
+
+                palletItems = palletWarehouseItemRepository
+                        .findAllByPallet_Id(pallet.getId());
+
+                if (palletItems.isEmpty()) {
+                    throw new IllegalStateException(
+                            "Pallet does not contain any warehouse items"
+                    );
+                }
+
+                eventLogTrackingService.completeStep(
+                        palletValidationStepId
+                );
+
+            } catch (RuntimeException exception) {
+                eventLogTrackingService.failStep(
+                        palletValidationStepId,
+                        "PALLET_RELOCATION_VALIDATION_FAILED",
+                        exception.getMessage()
+                );
+
+                throw exception;
+            }
+
+            // Validate every warehouse item before moving anything
             for (PalletWarehouseItem palletItem : palletItems) {
-
                 WarehouseItem warehouseItem = palletItem.getWarehouseItem();
 
-                Long stepId = eventLogTrackingService.startStep(
+                eventLogTrackingService.addEntity(
                         eventLogId,
-                        "RELOCATE_WAREHOUSE_ITEM",
-                        "Moving warehouse item " + warehouseItem.getEtiNumber(),
+                        "WAREHOUSE_ITEM",
+                        warehouseItem.getId()
+                );
+
+                Long validationStepId = eventLogTrackingService.startStep(
+                        eventLogId,
+                        "VALIDATE_WAREHOUSE_ITEM",
+                        "Validating warehouse item " + warehouseItem.getEtiNumber(),
                         Map.of(
                                 "eti", warehouseItem.getEtiNumber(),
                                 "targetLocationCode", dto.targetLocationCode()
@@ -147,6 +185,50 @@ public class PalletMovementService {
                         );
                     }
 
+                    eventLogTrackingService.completeStep(validationStepId);
+
+                } catch (RuntimeException exception) {
+                    eventLogTrackingService.failStep(
+                            validationStepId,
+                            "WAREHOUSE_ITEM_VALIDATION_FAILED",
+                            exception.getMessage()
+                    );
+
+                    throw exception;
+                }
+            }
+
+            /*
+             * PHASE 2: RELOCATION
+             */
+
+            // Find shipment and order associated with the pallet
+            Shipment shipment = shipmentItemRepository
+                    .findByPalletIdWithShipmentAndOrder(pallet.getId())
+                    .map(ShipmentItem::getShipment)
+                    .orElse(null);
+
+            Order order = shipment != null
+                    ? shipment.getOrder()
+                    : null;
+
+            // Move individual warehouse items
+            for (PalletWarehouseItem palletItem : palletItems) {
+                WarehouseItem warehouseItem = palletItem.getWarehouseItem();
+
+                Location currentLocation = warehouseItem.getLocation();
+
+                Long relocationStepId = eventLogTrackingService.startStep(
+                        eventLogId,
+                        "RELOCATE_WAREHOUSE_ITEM",
+                        "Moving warehouse item " + warehouseItem.getEtiNumber(),
+                        Map.of(
+                                "eti", warehouseItem.getEtiNumber(),
+                                "targetLocationCode", dto.targetLocationCode()
+                        )
+                );
+
+                try {
                     warehouseItem.setLocation(targetLocation);
                     warehouseItemRepository.save(warehouseItem);
 
@@ -164,17 +246,13 @@ public class PalletMovementService {
                             null
                     );
 
-                    eventLogTrackingService.addEntity(
-                            eventLogId,
-                            "WAREHOUSE_ITEM",
-                            warehouseItem.getId()
+                    eventLogTrackingService.completeStep(
+                            relocationStepId
                     );
-
-                    eventLogTrackingService.completeStep(stepId);
 
                 } catch (RuntimeException exception) {
                     eventLogTrackingService.failStep(
-                            stepId,
+                            relocationStepId,
                             "WAREHOUSE_ITEM_RELOCATION_FAILED",
                             exception.getMessage()
                     );
@@ -184,7 +262,7 @@ public class PalletMovementService {
             }
 
             // Move pallet itself
-            palletStepId = eventLogTrackingService.startStep(
+            Long palletStepId = eventLogTrackingService.startStep(
                     eventLogId,
                     "RELOCATE_PALLET",
                     "Moving pallet " + pallet.getPalletNumber(),
@@ -194,32 +272,32 @@ public class PalletMovementService {
                     )
             );
 
-            pallet.setLocation(targetLocation);
-            palletRepository.save(pallet);
+            try {
+                pallet.setLocation(targetLocation);
+                palletRepository.save(pallet);
 
-            eventLogTrackingService.addEntity(
-                    eventLogId,
-                    "PALLET",
-                    pallet.getId()
-            );
+                eventLogTrackingService.completeStep(palletStepId);
 
-            eventLogTrackingService.completeStep(palletStepId);
-            eventLogTrackingService.completeEvent(eventLogId);
-
-        } catch (RuntimeException exception) {
-
-            if (palletStepId != null) {
+            } catch (RuntimeException exception) {
                 eventLogTrackingService.failStep(
                         palletStepId,
                         "PALLET_RELOCATION_FAILED",
                         exception.getMessage()
                 );
+
+                throw exception;
             }
 
+            // Complete event
+            eventLogTrackingService.completeEvent(eventLogId);
+
+        } catch (RuntimeException exception) {
             eventLogTrackingService.failEvent(eventLogId);
             throw exception;
         }
     }
+
+
 
     private void validateRequest(MovePalletDto dto) {
         if (dto == null) {
