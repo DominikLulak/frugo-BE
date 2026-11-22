@@ -27,6 +27,7 @@ public interface PalletWarehouseItemRepository extends JpaRepository<PalletWareh
             @Param("palletId") Integer palletId
     );
 
+
     @Query("""
         SELECT new com.lulak.frugo.dto.pallet.AdminPalletWarehouseItemDto(
             p.productCode,
@@ -41,10 +42,14 @@ public interface PalletWarehouseItemRepository extends JpaRepository<PalletWareh
         JOIN p.productType.category c
         JOIN p.productType pt
         JOIN pwi.warehouseItem wi
+        WHERE pwi.pallet.id = :id
     """)
     List<AdminPalletWarehouseItemDto> findByPalletId(
             @Param("id") Integer id
     );
 
+
     boolean existsByWarehouseItem_Id(Integer warehouseItemId);
+
+    List<PalletWarehouseItem> findAllByPallet_Id(Integer id);
 }
