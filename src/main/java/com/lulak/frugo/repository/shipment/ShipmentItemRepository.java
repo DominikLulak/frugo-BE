@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ShipmentItemRepository extends JpaRepository<ShipmentItem, Integer> {
 
@@ -22,5 +23,16 @@ public interface ShipmentItemRepository extends JpaRepository<ShipmentItem, Inte
     """)
     List<AdminShipmentItemDto> getShipmentPallet(
             @Param("shipmentId")Integer shipmentId
+    );
+
+    @Query("""
+        SELECT si
+        FROM ShipmentItem si
+        JOIN FETCH si.shipment s
+        JOIN FETCH s.order
+        WHERE si.pallet.id = :palletId
+    """)
+    Optional<ShipmentItem> findByPalletIdWithShipmentAndOrder(
+            @Param("palletId") Integer palletId
     );
 }

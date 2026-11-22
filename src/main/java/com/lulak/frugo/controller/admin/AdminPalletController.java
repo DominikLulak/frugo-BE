@@ -3,7 +3,9 @@ package com.lulak.frugo.controller.admin;
 import com.lulak.frugo.dto.pallet.AdminPalletDetailDto;
 import com.lulak.frugo.dto.pallet.AdminPalletListDto;
 import com.lulak.frugo.dto.pallet.AdminPalletWarehouseItemDto;
+import com.lulak.frugo.dto.pallet.transaction.MovePalletDto;
 import com.lulak.frugo.service.pallet.AdminPalletService;
+import com.lulak.frugo.service.pallet.transactions.PalletMovementService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,11 +17,13 @@ import java.util.List;
 public class AdminPalletController {
 
     private final AdminPalletService adminPalletService;
+    private final PalletMovementService palletMovementService;
 
     public AdminPalletController(
-            AdminPalletService adminPalletService
-    ){
+            AdminPalletService adminPalletService,
+            PalletMovementService palletMovementService){
         this.adminPalletService = adminPalletService;
+        this.palletMovementService = palletMovementService;
     }
 
     @GetMapping
@@ -42,5 +46,13 @@ public class AdminPalletController {
             @PathVariable Integer id
     ){
         return adminPalletService.getPalletDetail(id);
+    }
+
+    @PostMapping("/move")
+    @PreAuthorize("hasAuthority('STOCKS_MOVE')")
+    public void movePallet(
+            @RequestBody MovePalletDto dto
+    ){
+        palletMovementService.movePallet(dto);
     }
 }
